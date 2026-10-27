@@ -15,6 +15,8 @@ img{max-width:100%}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Onest:wght@300;400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <style>
 /* Layout: sticky header with tabs, one working column up to 1180px; publication opens in a right-hand panel. Somni night palette first. */
 :root{
@@ -210,8 +212,50 @@ table.mt input{width:100%;max-width:130px;background:var(--surf);border:0;border
 .dv small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
 .comment{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
 .comment img{width:28px;height:28px;border-radius:50%;flex:none}
-.comment .ct{white-space:pre-wrap;margin-top:2px}
+.comment .ct{margin-top:2px}
 .comment .cm{font-size:12.5px;color:var(--faint)}
+
+/* calendar */
+.cal-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.cal-nav{display:inline-flex;background:var(--surf);border-radius:10px;padding:3px;gap:2px;align-items:center}
+.cal-nav button{border:0;background:transparent;border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--ink);font-weight:500}
+.cal-nav button:hover{background:var(--bg)}
+.cal-title{font:700 20px var(--f-display);min-width:200px}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.wk-day{background:var(--bg2);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:340px}
+.wk-day.drop{outline:2px dashed var(--amber);outline-offset:-2px}
+.wk-h{display:flex;align-items:baseline;justify-content:space-between;padding:2px 4px 6px}
+.wk-h b{font-weight:600}
+.wk-h span{font-size:12.5px;color:var(--faint)}
+.wk-day.today .wk-h b{color:var(--amber-ink)}
+.wk-day.out{opacity:.55}
+.ev{display:block;text-decoration:none;border-radius:10px;padding:8px 9px;cursor:pointer;font-size:13px;line-height:1.35}
+.ev.N{background:var(--night-soft)} .ev.D{background:var(--amber-soft)}
+.ev:hover{filter:brightness(1.12)}
+.ev .et{display:flex;justify-content:space-between;gap:6px;font-weight:600;font-variant-numeric:tabular-nums}
+.ev.N .et{color:var(--night)} .ev.D .et{color:var(--amber-ink)}
+.ev .tt{margin-top:3px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ev .es{margin-top:5px;font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.ev .es .dot{width:7px;height:7px}
+.ev[draggable="true"]{cursor:grab}
+.add-day{border:0;background:transparent;color:var(--faint);border-radius:8px;padding:6px;cursor:pointer;margin-top:auto;font-size:13px}
+.add-day:hover{background:var(--surf);color:var(--ink)}
+.mo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.mo-h{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;padding:0 6px 4px}
+.mo-c{background:var(--bg2);border-radius:12px;padding:6px;min-height:118px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mo-c.out{opacity:.45}
+.mo-c.today .mo-d{color:var(--amber-ink);font-weight:700}
+.mo-c.drop{outline:2px dashed var(--amber);outline-offset:-2px}
+.mo-d{font-size:13px;color:var(--muted);padding:0 4px;display:flex;justify-content:space-between}
+.chipev{display:block;text-decoration:none;font-size:12px;border-radius:7px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chipev.N{background:var(--night-soft);color:var(--ink)} .chipev.D{background:var(--amber-soft);color:var(--ink)}
+.chipev b{font-weight:600;font-variant-numeric:tabular-nums}
+.more{border:0;background:none;color:var(--muted);font-size:12px;text-align:left;padding:2px 6px;cursor:pointer}
+@media (max-width:860px){
+  .wk{grid-template-columns:minmax(0,1fr)}
+  .wk-day{min-height:0}
+  .mo{gap:3px}.mo-c{min-height:64px;padding:4px}.chipev{font-size:0;padding:0;height:6px;border-radius:3px}.chipev b{display:none}.mo-h{font-size:10px;padding:0}
+}
 
 /* strategy */
 .strat{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px}
@@ -227,6 +271,27 @@ table.mt input{width:100%;max-width:130px;background:var(--surf);border:0;border
 .md h3{margin:18px 0 8px;font-size:16px}
 .md ul,.md ol{margin:0 0 12px;padding-left:20px}
 .md li{margin:4px 0}
+.md h1,.md h2,.md h3,.md h4{font-family:var(--f-display);margin:20px 0 8px;line-height:1.25}
+.md h1{font-size:22px}.md h2{font-size:19px}.md h3{font-size:16px}.md h4{font-size:15px}
+.md > :first-child{margin-top:0}
+.md a{color:var(--amber-ink)}
+.md code{background:var(--surf);padding:1px 6px;border-radius:6px;font-size:.92em}
+.md pre{background:var(--surf);padding:12px 14px;border-radius:10px;overflow-x:auto}
+.md pre code{background:none;padding:0}
+.md blockquote{margin:0 0 12px;padding:4px 0 4px 14px;box-shadow:inset 3px 0 0 var(--amber);color:var(--muted)}
+.md hr{border:0;height:1px;background:var(--line);margin:18px 0}
+.md li:has(> input[type="checkbox"]){list-style:none;margin-left:-20px}
+.md li > input[type="checkbox"]{margin:0 10px 0 0;vertical-align:-2px;accent-color:var(--amber);width:16px;height:16px}
+.md li:has(> input[type="checkbox"]:checked){color:var(--muted);text-decoration:line-through}
+.md.compact p{margin:0 0 6px}.md.compact > :last-child{margin-bottom:0}
+.mdtools{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.mdtools button{border:0;background:var(--surf);border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
+.mdtools button:hover{color:var(--ink);background:var(--surf2)}
+.mdedit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.mdedit textarea{font:14px/1.55 ui-monospace,"SF Mono",Menlo,Consolas,monospace;min-height:420px}
+.mdprev{background:var(--bg2);border-radius:10px;padding:14px 16px;max-height:70vh;overflow:auto}
+.mdprev .lab{margin-bottom:10px}
+@media (max-width:1000px){.mdedit{grid-template-columns:minmax(0,1fr)}}
 .md li.ck{list-style:none;margin-left:-20px;display:flex;gap:10px;align-items:flex-start}
 .md li.ck input{margin-top:5px;accent-color:var(--amber);width:16px;height:16px;flex:none}
 .md li.ck.done span{color:var(--muted);text-decoration:line-through}
@@ -261,7 +326,7 @@ details.hist summary{cursor:pointer;color:var(--muted)}
 .composer .ta{background:var(--bg2);min-height:80px}
 .composer .cr{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .idea{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}
-.idea .it{white-space:pre-wrap;font-size:15.5px}
+.idea .it{font-size:15.5px}
 .idea .im{font-size:12.5px;color:var(--faint);display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
 .idea .ia{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
 @media (max-width:640px){.idea{grid-template-columns:1fr}.idea .ia{justify-content:flex-start}}
@@ -323,6 +388,7 @@ table.data input{width:80px;background:var(--surf);border:0;border-radius:8px;pa
     </div>
     <nav class="tabs" id="tabs" aria-label="Разделы">
       <a href="#plan" data-v="plan">План</a>
+      <a href="#calendar" data-v="calendar">Календарь</a>
       <a href="#strategy" data-v="strategy">Стратегия</a>
       <a href="#hooks" data-v="hooks">Хуки</a>
       <a href="#library" data-v="library">Тела и призывы</a>
@@ -369,7 +435,7 @@ const S = {
   posts:new Map(), hooks:new Map(), bodies:new Map(), ctas:new Map(), strategy:new Map(), ideas:new Map(),
   campaigns:new Map(), comments:new Map(), log:[], thr:null, loaded:{},
   campaign:null, canWrite:true, me:null, view:"plan", openPost:null, drTab:"script",
-  f:{stream:"all", status:"all", q:""}, editLib:null, libTab:"night", editSec:null, hookSort:"code", hookFilter:"all",
+  f:{stream:"all", status:"all", q:""}, cal:{mode:"week", anchor:null, tz:"et"}, editLib:null, libTab:"night", editSec:null, hookSort:"code", hookFilter:"all",
   ideaFilter:"all", metricsScope:"camp", newCamp:false, ideaPlan:null, confirmDel:false
 };
 let db = null, user = null, assets = null, downloads = null;
@@ -502,7 +568,7 @@ function renderMain(){
   if(!db){ main.innerHTML = `<div class="empty"><h2>Нет доступа к общей базе</h2><p>${esc(window.SOMNI_NO_DB_TEXT || "Откройте страницу на claude.ai, войдя в аккаунт. Без входа план не загрузится и правки не сохранятся.")}</p></div>`; return; }
   if(!S.loaded.posts || !S.loaded.campaigns){ return; }
   const v = S.view;
-  const html = v==="strategy" ? vStrategy() : v==="hooks" ? vHooks() : v==="library" ? vLibrary() : v==="ideas" ? vIdeas() : v==="metrics" ? vMetrics() : v==="history" ? vHistory() : v==="legend" ? vLegend() : vPlan();
+  const html = v==="calendar" ? vCalendar() : v==="strategy" ? vStrategy() : v==="hooks" ? vHooks() : v==="library" ? vLibrary() : v==="ideas" ? vIdeas() : v==="metrics" ? vMetrics() : v==="history" ? vHistory() : v==="legend" ? vLegend() : vPlan();
   main.innerHTML = html;
   main.querySelectorAll("table.sc textarea").forEach(autoH);
   if(!S.canWrite) lockInputs(main);
@@ -536,6 +602,7 @@ function vPlan(){
     <input class="in" id="fQ" data-free type="search" placeholder="Поиск" value="${esc(S.f.q)}">
     <span class="sp"></span>
     <a class="btn ghost" href="#legend">Что значат коды</a>
+    <button class="btn" data-act="mdplan">${downloads ? "Скачать .md" : "Копировать Markdown"}</button>
     ${downloads ? `<button class="btn" data-act="csv">Выгрузить в Excel</button>` : ""}
   </div>`;
   if(S.newCamp) out += newCampForm();
@@ -584,7 +651,7 @@ function renderDrawer(){
   const nc = [...S.comments.values()].filter(c => c.post === p.id).length;
   const camp = S.campaigns.get(p.campaign); const weeks = (camp?.weeks||[]).map(w=>[String(w.n),"Неделя "+w.n]);
   let o = `<div class="dr-top"><span class="code">${esc(p.code)}</span><span class="chip s-${esc(p.stream)}">${STREAMS[p.stream]||""}</span>
-    <span style="flex:1"></span><button class="btn ghost" data-act="close" aria-label="Закрыть">Закрыть</button></div>
+    <span style="flex:1"></span><button class="btn sm ghost" data-act="mdpost">Копировать в Markdown</button><button class="btn ghost" data-act="close" aria-label="Закрыть">Закрыть</button></div>
     <input class="dr-title" data-pf="title" value="${esc(p.title||"")}" placeholder="Название публикации" aria-label="Название">
     <div class="meta">
       <div><label class="lab" for="pDate">Дата (ET)</label><input class="in" id="pDate" type="date" data-pf="date" value="${esc(p.date||"")}"></div>
@@ -676,10 +743,85 @@ function tTalk(p){
   return `<span class="lab">Как зашло</span><div class="seg" role="group" aria-label="Оценка">${VERDICTS.map(([k,l])=>`<button data-act="verdict" data-v="${k}" aria-pressed="${p.verdict===k}">${l}</button>`).join("")}<button data-act="verdict" data-v="" aria-pressed="${!p.verdict}">Не оценено</button></div>
     <label class="lab" for="pVn" style="margin-top:14px">Почему так</label><textarea class="ta" id="pVn" data-pf="verdictNote" placeholder="Что сработало или нет, что попробовать в следующий раз">${esc(p.verdictNote||"")}</textarea>
     <h3 style="margin:26px 0 6px">Комментарии</h3>
-    ${cs.map(c => `<div class="comment">${avatarOf(c.by)?`<img src="${esc(avatarOf(c.by))}" alt="">`:""}<div style="flex:1;min-width:0"><div class="cm">${esc(nameOf(c.by))} · ${esc(ago(c.at))}</div><div class="ct">${esc(c.text)}</div></div>
+    ${cs.map(c => `<div class="comment">${avatarOf(c.by)?`<img src="${esc(avatarOf(c.by))}" alt="">`:""}<div style="flex:1;min-width:0"><div class="cm">${esc(nameOf(c.by))} · ${esc(ago(c.at))}</div><div class="ct md compact">${mdRender(c.text)}</div></div>
       ${c.by && c.by===S.me?.id?`<button class="btn sm ghost w" data-act="delcomment" data-id="${esc(c.id)}" aria-label="Удалить комментарий">×</button>`:""}</div>`).join("") || `<p class="faint">Пока никто не писал.</p>`}
-    <div class="w" style="display:grid;gap:8px;margin-top:12px"><textarea class="ta" id="newComment" data-free placeholder="Напишите комментарий для команды"></textarea><div><button class="btn pri" data-act="addcomment">Отправить</button></div></div>`;
+    <div class="w" style="display:grid;gap:8px;margin-top:12px"><textarea class="ta" id="newComment" data-free placeholder="Напишите комментарий для команды. Работает Markdown."></textarea><div><button class="btn pri" data-act="addcomment">Отправить</button></div></div>`;
 }
+
+/* --- calendar --- */
+const iso = d => d.toISOString().slice(0,10);
+function addDays(s, n){ const d = parseD(s); d.setUTCDate(d.getUTCDate() + n); return iso(d); }
+function mondayOf(s){ const d = parseD(s); const dw = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - dw); return iso(d); }
+function todayIso(){ const n = new Date(); return n.getFullYear() + "-" + pad(n.getMonth()+1) + "-" + pad(n.getDate()); }
+function mskOf(date, time){
+  if(!date || !time) return {date, time};
+  const [h,mi] = time.split(":").map(Number); const d = parseD(date);
+  const m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), h, mi) - etOffset(date)*3600e3 + 3*3600e3);
+  return {date: iso(m), time: pad(m.getUTCHours()) + ":" + pad(m.getUTCMinutes())};
+}
+function calSlot(p){ return S.cal.tz === "msk" ? mskOf(p.date, p.time) : {date:p.date, time:p.time}; }
+function calAnchor(){
+  if(S.cal.anchor) return S.cal.anchor;
+  const t = todayIso(); const c = curCamp();
+  const inCamp = [...S.campaigns.values()].some(x => x.start && x.end && t >= x.start && t <= x.end);
+  return (inCamp || !c?.start) ? t : c.start;
+}
+function calPosts(){ return [...S.posts.values()].filter(p => p.date && (S.f.stream === "all" || p.stream === S.f.stream)); }
+function evCard(p, sl){
+  const h = hookOf(p);
+  return `<a class="ev ${esc(p.stream)}" href="#post-${esc(p.id)}" draggable="${S.canWrite}" data-drag="${esc(p.id)}" title="${esc((p.title||"") + (h ? " — " + h.text : ""))}">
+    <div class="et"><span>${esc(sl.time||"")}</span><span>${esc(p.code)}</span></div>
+    <div class="tt">${esc(p.title || "Без названия")}</div>
+    <div class="es"><span class="dot" style="color:${{plan:"var(--faint)",script:"var(--night)",prod:"var(--blue)",ready:"var(--mid)",live:"var(--good)"}[p.status]||"var(--faint)"}"></span>${STATUS_L[p.status]||"План"}${p.format ? " · " + esc(p.format) : ""}</div></a>`;
+}
+function vCalendar(){
+  const a = calAnchor(); const mode = S.cal.mode; const today = todayIso();
+  const posts = calPosts().map(p => ({p, sl: calSlot(p)}));
+  const byDay = {}; posts.forEach(x => { (byDay[x.sl.date] = byDay[x.sl.date] || []).push(x); });
+  Object.values(byDay).forEach(arr => sortBy(arr, x => (x.sl.time||"") + x.p.code));
+  let title, body;
+  if(mode === "week"){
+    const mon = mondayOf(a), sun = addDays(mon, 6), dm = parseD(mon), ds = parseD(sun);
+    title = dm.getUTCMonth() === ds.getUTCMonth() ? `${dm.getUTCDate()} — ${ds.getUTCDate()} ${MONTHS[ds.getUTCMonth()]}` : `${dm.getUTCDate()} ${MONTHS[dm.getUTCMonth()]} — ${ds.getUTCDate()} ${MONTHS[ds.getUTCMonth()]}`;
+    body = `<div class="wk">${[0,1,2,3,4,5,6].map(i => { const day = addDays(mon, i), d = parseD(day); const list = byDay[day] || [];
+      return `<div class="wk-day${day===today?" today":""}" data-day="${day}"><div class="wk-h"><b>${DOW[d.getUTCDay()]}, ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}</b><span>${list.length || ""}</span></div>
+        ${list.map(x => evCard(x.p, x.sl)).join("")}
+        <button class="add-day w" data-act="caladd" data-day="${day}" aria-label="Добавить публикацию на ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}">+ Добавить</button></div>`; }).join("")}</div>`;
+  } else {
+    const d0 = parseD(a); const first = iso(new Date(Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth(), 1)));
+    const m = d0.getUTCMonth(); title = `${["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"][m]} ${d0.getUTCFullYear()}`;
+    let cur = mondayOf(first); const cells = [];
+    do { for(let i=0;i<7;i++){ cells.push(cur); cur = addDays(cur, 1); } } while(parseD(cur).getUTCMonth() === m);
+    body = `<div class="mo">${["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(x => `<div class="mo-h">${x}</div>`).join("")}${cells.map(day => { const d = parseD(day); const list = byDay[day] || [];
+      return `<div class="mo-c${d.getUTCMonth()!==m?" out":""}${day===today?" today":""}" data-day="${day}"><div class="mo-d"><span>${d.getUTCDate()}</span></div>
+        ${list.slice(0,4).map(x => `<a class="chipev ${esc(x.p.stream)}" href="#post-${esc(x.p.id)}" draggable="${S.canWrite}" data-drag="${esc(x.p.id)}" title="${esc(x.sl.time+" · "+x.p.code+" · "+(x.p.title||""))}"><b>${esc(x.sl.time||"")}</b> ${esc(x.p.title||x.p.code)}</a>`).join("")}
+        ${list.length > 4 ? `<button class="more" data-act="calweek" data-day="${day}">Ещё ${list.length-4}</button>` : ""}</div>`; }).join("")}</div>`;
+  }
+  const undated = [...S.posts.values()].filter(p => !p.date && p.campaign === S.campaign);
+  return `<div class="vhead"><div><h1>Календарь публикаций</h1><p class="muted">Фиолетовые карточки — ночной поток, янтарные — дневной. Публикацию можно перетащить на другой день.</p></div></div>
+  <div class="cal-bar">
+    <div class="cal-nav"><button data-act="calprev" aria-label="Назад">‹</button><button data-act="caltoday">Сегодня</button><button data-act="calnext" aria-label="Вперёд">›</button></div>
+    <span class="cal-title">${esc(title)}</span><span class="sp" style="flex:1"></span>
+    <div class="seg" role="group" aria-label="Масштаб">${[["week","Неделя"],["month","Месяц"]].map(([k,l]) => `<button data-act="calmode" data-v="${k}" aria-pressed="${mode===k}">${l}</button>`).join("")}</div>
+    <div class="seg" role="group" aria-label="Время">${[["et","По Нью-Йорку"],["msk","По Москве"]].map(([k,l]) => `<button data-act="caltz" data-v="${k}" aria-pressed="${S.cal.tz===k}">${l}</button>`).join("")}</div>
+    <div class="seg" role="group" aria-label="Поток">${[["all","Все"],["N","Ночь"],["D","День"]].map(([k,l]) => `<button data-act="fstream" data-v="${k}" aria-pressed="${S.f.stream===k}">${l}</button>`).join("")}</div>
+  </div>${body}
+  ${undated.length ? `<h2 style="margin-top:30px">Без даты</h2><div class="rows" style="margin-top:8px">${undated.map(rowHtml).join("")}</div>` : ""}`;
+}
+async function movePost(id, day){
+  const p = S.posts.get(id); if(!p || !day) return;
+  let date = day;
+  if(S.cal.tz === "msk" && p.date && p.time){ const shift = Math.round((parseD(mskOf(p.date, p.time).date) - parseD(p.date)) / 864e5); date = addDays(day, -shift); }
+  if(date === p.date) return;
+  const patch = {date}; const c = S.campaigns.get(p.campaign);
+  if(c?.start){ const w = Math.floor((parseD(date) - parseD(c.start)) / (7*864e5)) + 1; if(w >= 1 && (c.weeks||[]).some(x => x.n === w)) patch.week = w; }
+  await upd(postPath(id), patch); logIt(`перенёс(ла) ${p.code} на ${fmtLong(date)}`, id); toast(`${p.code} перенесена на ${fmtLong(date)}`);
+}
+let dragId = null;
+document.addEventListener("dragstart", e => { const el = e.target.closest?.("[data-drag]"); if(!el) return; dragId = el.dataset.drag; e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", dragId); } catch(_){} });
+document.addEventListener("dragover", e => { const z = dragId && e.target.closest?.("[data-day]"); if(z){ e.preventDefault(); document.querySelectorAll(".drop").forEach(x => x !== z && x.classList.remove("drop")); z.classList.add("drop"); } });
+document.addEventListener("drop", e => { const z = dragId && e.target.closest?.("[data-day]"); if(z){ e.preventDefault(); z.classList.remove("drop"); const id = dragId; dragId = null; movePost(id, z.dataset.day); } });
+document.addEventListener("dragend", () => { dragId = null; document.querySelectorAll("[data-day].drop").forEach(x => x.classList.remove("drop")); });
 
 /* --- strategy --- */
 function inlineMd(s){ return esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
@@ -688,7 +830,7 @@ function md(src, secId){
   const flush = () => { if(para.length){ o += `<p>${para.map(inlineMd).join("<br>")}</p>`; para = []; } };
   while(i < lines.length){
     const L = lines[i];
-    if(/^\s*\|/.test(L)){ flush(); const rows = []; while(i < lines.length && /^\s*\|/.test(lines[i])){ rows.push(lines[i].trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim())); i++; }
+    if(/^\s*\|/.test(L)){ flush(); const rows = []; while(i < lines.length && /^\s*\|/.test(lines[i])){ if(!/^\s*\|?\s*:?-{3,}/.test(lines[i])) rows.push(lines[i].trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim())); i++; }
       o += `<div class="tbl"><table><thead><tr>${rows[0].map(c=>`<th>${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>${rows.slice(1).map(r=>`<tr>${r.map(c=>`<td>${inlineMd(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`; continue; }
     if(/^## /.test(L)){ flush(); o += `<h3>${inlineMd(L.slice(3))}</h3>`; i++; continue; }
     if(/^- \[( |x)\] /i.test(L)){ flush(); o += "<ul>"; while(i < lines.length && /^- \[( |x)\] /i.test(lines[i])){ const done = /^- \[x\]/i.test(lines[i]);
@@ -700,26 +842,103 @@ function md(src, secId){
   }
   flush(); return o;
 }
+function fixTables(text){
+  const L = text.split("\n"), out = []; const isRow = l => /^\s*\|.*\|\s*$/.test(l), isSep = l => /^\s*\|?\s*:?-{3,}/.test(l);
+  for(let i = 0; i < L.length; i++){
+    out.push(L[i]);
+    if(isRow(L[i]) && !isRow(L[i-1] || "") && isRow(L[i+1] || "") && !isSep(L[i+1])){
+      const n = L[i].trim().replace(/^\|/, "").replace(/\|$/, "").split("|").length; out.push("|" + " --- |".repeat(n)); }
+  }
+  return out.join("\n");
+}
+function mdRender(src, secId){
+  const body = String(src || "");
+  if(!window.marked || !window.DOMPurify) return md(body, secId || "");
+  let html;
+  const fixed = fixTables(body);
+  try { html = window.DOMPurify.sanitize(window.marked.parse(fixed, {gfm:true, breaks:true})); } catch(e){ return md(body, secId || ""); }
+  const lines = body.split("\n"); const idx = []; let code = false;
+  lines.forEach((l,i) => { if(/^\s*```/.test(l)) code = !code; if(!code && /^\s*[-*+] \[( |x)\] /i.test(l)) idx.push(i); });
+  let k = 0;
+  html = html.replace(/<input[^>]*type="checkbox"[^>]*>/g, m => { const line = idx[k++]; const on = /checked/.test(m);
+    return secId != null && line != null ? `<input type="checkbox" data-ck="${esc(secId)}:${line}"${on?" checked":""} aria-label="Отметить пункт">` : `<input type="checkbox" disabled${on?" checked":""}>`; });
+  return html.replace(/<table>/g, '<div class="tbl"><table>').replace(/<\/table>/g, "</table></div>").replace(/<a href=/g, '<a target="_blank" rel="noopener" href=');
+}
+const MD_TOOLS = [["h","Заголовок"],["b","Жирный"],["i","Курсив"],["ul","Список"],["ol","Нумерация"],["ck","Галочка"],["tbl","Таблица"],["link","Ссылка"],["quote","Цитата"]];
+function mdInsert(ta, kind){
+  const a = ta.selectionStart, b = ta.selectionEnd, v = ta.value, sel = v.slice(a, b);
+  const lineStart = v.lastIndexOf("\n", a - 1) + 1;
+  const wrap = (l, r, ph) => { const t = sel || ph; ta.setRangeText(l + t + r, a, b, "end"); if(!sel){ ta.selectionStart = a + l.length; ta.selectionEnd = a + l.length + ph.length; } };
+  const prefix = p => { const block = v.slice(lineStart, b); const out = block.split("\n").map((l,i) => (typeof p === "function" ? p(i) : p) + l).join("\n"); ta.setRangeText(out, lineStart, b, "end"); };
+  if(kind === "b") wrap("**", "**", "жирный текст");
+  else if(kind === "i") wrap("*", "*", "курсив");
+  else if(kind === "link") wrap("[", "](https://)", "текст ссылки");
+  else if(kind === "h") prefix("## ");
+  else if(kind === "ul") prefix("- ");
+  else if(kind === "ol") prefix(i => (i+1) + ". ");
+  else if(kind === "ck") prefix("- [ ] ");
+  else if(kind === "quote") prefix("> ");
+  else if(kind === "tbl"){ const t = (a > 0 && v[a-1] !== "\n" ? "\n\n" : "") + "| Колонка 1 | Колонка 2 |\n| --- | --- |\n| Текст | Текст |\n"; ta.setRangeText(t, a, b, "end"); }
+  ta.focus(); ta.dispatchEvent(new Event("input", {bubbles:true}));
+}
+function strategyMd(){
+  const secs = sortBy([...S.strategy.values()], s => s.order ?? 0);
+  let o = "# Контент-стратегия Somni\n\n";
+  for(const s of secs) o += `## ${s.title}\n\n${String(s.body||"").replace(/^(#{1,5}) /gm, "#$1 ")}\n\n`;
+  o += "## Пороги метрик\n\n| Метрика | Хорошо | Плохо | Что меняем при плохом |\n| --- | --- | --- | --- |\n" +
+    (S.thr?.items||[]).map(t => `| ${t.label} | ${t.dir==="low"?"до":"от"} ${t.good} | ${t.dir==="low"?"выше":"ниже"} ${t.bad} | ${t.fix} |`).join("\n") + "\n";
+  return o;
+}
+const cellMd = v => String(v ?? "").replace(/\|/g, "\\|").replace(/\n+/g, "<br>");
+function postMd(p){
+  const h = hookOf(p), cta = S.ctas.get(p.cta); const cols = p.cols && p.cols.length === 4 ? p.cols : REEL_COLS;
+  const used = [0,1,2,3].filter(ci => cols[ci] || (p.scenes||[]).some(r => (r.c||[])[ci]));
+  let o = `### ${p.code} · ${p.title || "Без названия"}\n\n`;
+  o += `- **Когда:** ${fmtD(p.date)}, ${p.time||"—"} по Нью-Йорку (${toMsk(p.date,p.time)})\n- **Поток:** ${STREAMS[p.stream]||"—"}, **формат:** ${p.format ? p.format + " · " + (FORMATS[p.format]||"") : (p.kind||"—")}${p.length ? ", " + p.length : ""}\n- **Статус:** ${STATUS_L[p.status]||"План"}${p.verdict ? ", оценка: " + VERDICT_L[p.verdict] : ""}\n`;
+  o += `- **Хук:** ${h ? `${h.code} — ${h.text}` : (p.hookText || "—")}${p.hookNote ? " (" + p.hookNote + ")" : ""}\n- **Тело:** ${p.body || "—"}\n- **Призыв:** ${cta ? `${cta.code} — ${cta.text}` : (p.cta || "—")}\n- **Что проверяем:** ${p.test || "—"}\n\n`;
+  if(p.trialNote) o += `${p.trialNote}\n\n`;
+  if((p.scenes||[]).length){ o += `| ${used.map(ci => cellMd(cols[ci])).join(" | ")} |\n| ${used.map(() => "---").join(" | ")} |\n` + p.scenes.map(r => `| ${used.map(ci => cellMd((r.c||[])[ci])).join(" | ")} |`).join("\n") + "\n\n"; }
+  if(p.caption) o += `**Подпись:**\n\n> ${p.caption.replace(/\n/g, "\n> ")}\n\n`;
+  if(p.production) o += `**Производство:** ${p.production}\n\n`;
+  (p.prompts||[]).forEach((t,i) => { o += `**Промпт ${i+1}:**\n\n\`\`\`\n${t}\n\`\`\`\n\n`; });
+  if(p.verdictNote) o += `**Почему так:** ${p.verdictNote}\n\n`;
+  return o;
+}
+function planMd(){
+  const c = curCamp(); if(!c) return "";
+  let o = `# ${c.name}\n\n${c.goal || ""}\n\n`;
+  for(const w of (c.weeks||[])){
+    o += `## Неделя ${w.n}${w.dates ? " · " + w.dates : ""}${w.title ? " · " + w.title : ""}\n\n`;
+    o += sortBy(campPosts().filter(p => p.week === w.n), p => (p.date||"") + (p.time||"")).map(postMd).join("");
+  }
+  return o;
+}
+function saveFile(name, text, type){
+  if(!downloads){ copyText(text); return; }
+  downloads.save({filename: name, data: new Blob([text], {type})}).then(() => toast("Файл сохранён")).catch(e => { if(e?.code !== "declined") toast("Не удалось сохранить файл"); });
+}
 function vStrategy(){
   const secs = sortBy([...S.strategy.values()], s => s.order ?? 0);
   ensureNames(secs.map(s => s.updatedBy));
   let o = `<div class="vhead"><div><h1>Контент-стратегия</h1><p class="muted">Общая для всех кампаний. Прошлые версии разделов сохраняются.</p></div>
-    <button class="btn w" data-act="addsec">+ Раздел</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-act="mdstrategy">${downloads ? "Скачать .md" : "Копировать Markdown"}</button><button class="btn w" data-act="addsec">+ Раздел</button></div></div>
     <div class="strat"><nav class="toc" aria-label="Разделы стратегии">${secs.map(s => `<a href="#strategy" data-act="toc" data-id="${esc(s.id)}">${esc(s.title)}</a>`).join("")}<a href="#strategy" data-act="toc" data-id="thr">Пороги метрик</a></nav><div>`;
   for(const s of secs){
     const editing = S.editSec === s.id;
     o += `<section class="sec" id="sec-${esc(s.id)}"><div class="sec-h">${editing ? `<input class="in" id="secTitle" value="${esc(s.title)}" aria-label="Название раздела" style="font:700 20px var(--f-display)">` : `<h2>${esc(s.title)}</h2>`}
       ${editing ? "" : `<button class="btn sm ghost w" data-act="editsec" data-id="${esc(s.id)}">Изменить</button>`}</div>`;
     if(editing){
-      o += `<textarea class="ta" id="secBody" style="min-height:${Math.min(700, 120 + (s.body||"").split("\n").length*22)}px;font-size:14px">${esc(s.body||"")}</textarea>
-        <p class="faint" style="font-size:12.5px;margin:6px 0">Разметка: «## » — подзаголовок, «- » — список, «- [ ] » — пункт с галочкой, строки через «|» — таблица, **жирный**.</p>
+      o += `<div class="mdtools" role="toolbar" aria-label="Оформление">${MD_TOOLS.map(([k,l]) => `<button type="button" data-act="mdins" data-v="${k}">${l}</button>`).join("")}</div>
+        <div class="mdedit"><textarea class="ta" id="secBody" spellcheck="true" style="min-height:${Math.min(640, 160 + (s.body||"").split("\n").length*22)}px" aria-label="Текст раздела в Markdown">${esc(s.body||"")}</textarea>
+        <div class="md mdprev" id="secPrev" aria-live="polite">${mdRender(s.body)}</div></div>
+        <p class="faint" style="font-size:12.5px;margin:6px 0">Текст пишется в Markdown, справа сразу видно, как он будет выглядеть. Таблице нужна строка «| --- | --- |» под заголовком.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="savesec" data-id="${esc(s.id)}">Сохранить</button><button class="btn ghost" data-act="cancelsec">Отмена</button>
         <span style="flex:1"></span><button class="btn ghost danger" data-act="delsec" data-id="${esc(s.id)}">Удалить раздел</button></div>`;
     } else {
-      o += `<div class="md">${md(s.body, s.id)}</div>`;
+      o += `<div class="md">${mdRender(s.body, s.id)}</div>`;
     }
     const hist = s.history || [];
-    o += `<div class="sec-foot"><span>Обновлено ${esc(ago(s.updatedAt))}${s.updatedBy?`, ${esc(nameOf(s.updatedBy))}`:""}</span>
+    o += `<div class="sec-foot"><span>Обновлено ${esc(ago(s.updatedAt))}${editing ? "" : `</span><button class="btn sm ghost" data-act="copysecmd" data-id="${esc(s.id)}" style="margin-left:-6px">Копировать Markdown</button><span>`}${s.updatedBy?`, ${esc(nameOf(s.updatedBy))}`:""}</span>
       ${hist.length ? `<details class="hist"><summary>Прошлые версии · ${hist.length}</summary>${hist.slice().reverse().map((h,ri) => { const idx = hist.length-1-ri;
         return `<div class="hv"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>${esc(ago(h.at))}${h.by?`, ${esc(nameOf(h.by))}`:""}</span><button class="btn sm w" data-act="restoresec" data-id="${esc(s.id)}" data-i="${idx}">Вернуть эту версию</button></div><pre>${esc(h.body)}</pre></div>`; }).join("")}</details>` : ""}</div></section>`;
     ensureNames(hist.map(h=>h.by));
@@ -821,7 +1040,7 @@ function vIdeas(){
     <div class="toolbar" style="margin-top:22px"><div class="seg" role="group" aria-label="Статус идей">${[["all",`Все · ${S.ideas.size}`],...IDEA_STATUS.map(([k,l])=>[k,`${l} · ${cnt(k)}`])].map(([k,l])=>`<button data-act="ifilter" data-v="${k}" aria-pressed="${S.ideaFilter===k}">${l}</button>`).join("")}</div></div>`;
   o += ideas.map(i => { const st = i.status || "new"; const planning = S.ideaPlan === i.id;
     const c = curCamp(); const weeks = (c?.weeks||[]);
-    return `<div class="idea"><div style="min-width:0"><div class="it">${esc(i.text)}</div>
+    return `<div class="idea"><div style="min-width:0"><div class="it md compact">${mdRender(i.text)}</div>
       <div class="im"><span class="chip ${IDEA_CLASS[st]}">${IDEA_L[st]}</span><span>${esc(i.kind||"Идея")} для потока «${STREAMS[i.stream||"ND"]}». Добавил(а) ${esc(nameOf(i.by))}, ${esc(ago(i.at))}.</span>
       ${i.post && S.posts.get(i.post) ? `<a href="#post-${esc(i.post)}">Открыть ${esc(S.posts.get(i.post).code)}</a>` : ""}</div>
       ${planning ? `<div class="cr" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center"><span class="muted">В какую неделю «${esc(c?.name||"")}»?</span>${weeks.map(w=>`<button class="btn sm" data-act="ideatoplan" data-id="${esc(i.id)}" data-week="${w.n}">Неделя ${w.n}</button>`).join("")}<button class="btn sm ghost" data-act="ideaplancancel">Отмена</button></div>` : ""}</div>
@@ -1075,6 +1294,22 @@ document.addEventListener("click", async e => {
       logIt(`создал(а) кампанию «${name}»`); S.campaign = cid; S.newCamp = false; schedule(); break; }
     case "cancelcamp": S.newCamp = false; renderMain(); break;
     case "toc": { const el = document.getElementById("sec-" + id); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); break; }
+    case "mdins": { const ta = $("#secBody"); if(ta) mdInsert(ta, v); break; }
+    case "mdstrategy": saveFile("somni-strategy.md", strategyMd(), "text/markdown"); break;
+    case "copysecmd": { const s = S.strategy.get(id); if(s) copyText(`## ${s.title}\n\n${s.body||""}`); break; }
+    case "mdplan": saveFile("somni-plan-" + (curCamp()?.id || "plan") + ".md", planMd(), "text/markdown"); break;
+    case "mdpost": if(p) copyText(postMd(p)); break;
+    case "calprev": case "calnext": { const k = a === "calprev" ? -1 : 1; const an = calAnchor();
+      if(S.cal.mode === "week") S.cal.anchor = addDays(an, 7*k); else { const d = parseD(an); S.cal.anchor = iso(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + k, 1))); } renderMain(); break; }
+    case "caltoday": S.cal.anchor = todayIso(); renderMain(); break;
+    case "calmode": S.cal.mode = v; renderMain(); break;
+    case "caltz": S.cal.tz = v; renderMain(); break;
+    case "calweek": S.cal.mode = "week"; S.cal.anchor = b.dataset.day; renderMain(); break;
+    case "caladd": { const day = b.dataset.day; const date = S.cal.tz === "msk" ? addDays(day, -1) : day;
+      const c = [...S.campaigns.values()].find(x => x.start && x.end && date >= x.start && date <= x.end) || curCamp(); if(!c) break;
+      if(c.id !== S.campaign){ S.campaign = c.id; }
+      const w = c.start ? Math.max(1, Math.floor((parseD(date) - parseD(c.start)) / (7*864e5)) + 1) : 1;
+      createPost(w, {date, time:"23:30", stream:"N"}); break; }
     case "editsec": S.editSec = id; renderMain(); setTimeout(()=>$("#secBody")?.focus(), 30); break;
     case "cancelsec": S.editSec = null; renderMain(); break;
     case "savesec": { const s = S.strategy.get(id); const title = $("#secTitle").value.trim() || s.title, body = $("#secBody").value;
@@ -1139,13 +1374,14 @@ document.addEventListener("change", e => {
   if(t.dataset.thr){ const [i,k] = t.dataset.thr.split(":"); const items = (S.thr?.items||[]).map(x => Object.assign({}, x)); if(!items[+i]) return; const n = Number(t.value); if(isNaN(n)) return;
     items[+i][k] = n; upd("settings/thresholds", {items}); logOnce("thr"+i+k, `изменил(а) порог «${items[+i].label}»`); return; }
   if(t.dataset.ck){ const [sid, line] = t.dataset.ck.split(":"); const s = S.strategy.get(sid); if(!s) return; const lines = (s.body||"").split("\n");
-    lines[+line] = lines[+line].replace(/^- \[( |x)\]/i, t.checked ? "- [x]" : "- [ ]"); upd("strategy/" + sid, {body: lines.join("\n")});
-    if(t.checked) logIt(`отметил(а) готовым: ${lines[+line].slice(6, 70)}`); return; }
+    lines[+line] = lines[+line].replace(/^(\s*[-*+] )\[( |x)\]/i, (m0, pre) => pre + (t.checked ? "[x]" : "[ ]")); upd("strategy/" + sid, {body: lines.join("\n")});
+    if(t.checked) logIt(`отметил(а) готовым: ${lines[+line].replace(/^\s*[-*+] \[x\] /i, "").slice(0, 70)}`); return; }
 });
 document.addEventListener("input", e => {
   const t = e.target;
   if(t.id === "fQ"){ S.f.q = t.value; clearTimeout(t._d); t._d = setTimeout(() => { const pos = t.selectionStart; renderMain(); const n = $("#fQ"); if(n){ n.focus(); n.setSelectionRange(pos,pos); } }, 200); }
   if(t.matches("table.sc textarea")) autoH(t);
+  if(t.id === "secBody"){ clearTimeout(t._p); t._p = setTimeout(() => { const pv = $("#secPrev"); if(pv) pv.innerHTML = mdRender(t.value); }, 120); }
 });
 document.addEventListener("dragover", e => { const d = e.target.closest?.("#drop"); if(d){ e.preventDefault(); d.classList.add("on"); } });
 document.addEventListener("dragleave", e => { const d = e.target.closest?.("#drop"); if(d) d.classList.remove("on"); });
@@ -1154,7 +1390,7 @@ document.addEventListener("keydown", e => { if(e.key === "Escape" && !$("#drawer
 $("#scrim").addEventListener("click", closePost);
 
 /* ---------- routing ---------- */
-const VIEWS = ["plan","strategy","hooks","library","ideas","metrics","history","legend"];
+const VIEWS = ["plan","calendar","strategy","hooks","library","ideas","metrics","history","legend"];
 function route(){
   const h = location.hash.slice(1);
   if(h.startsWith("post-")){ const id = h.slice(5); if(S.view !== "plan" && !VIEWS.includes(S.view)) S.view = "plan";
