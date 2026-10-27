@@ -17,6 +17,8 @@ img{max-width:100%}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Onest:wght@300;400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/turndown@7.1.2/dist/turndown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/turndown-plugin-gfm@1.0.2/dist/turndown-plugin-gfm.js"></script>
 <style>
 /* Layout: sticky header with tabs, one working column up to 1180px; publication opens in a right-hand panel. Somni night palette first. */
 :root{
@@ -284,7 +286,16 @@ table.mt input{width:100%;max-width:130px;background:var(--surf);border:0;border
 .md li > input[type="checkbox"]{margin:0 10px 0 0;vertical-align:-2px;accent-color:var(--amber);width:16px;height:16px}
 .md li:has(> input[type="checkbox"]:checked){color:var(--muted);text-decoration:line-through}
 .md.compact p{margin:0 0 6px}.md.compact > :last-child{margin-bottom:0}
-.mdtools{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.mdtools{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;align-items:center}
+.mdtools .gap{width:10px}
+.mdtools .seg{margin-right:8px}
+.wys{background:var(--bg2);border-radius:12px;padding:16px 18px;min-height:260px;max-width:none;outline:none;box-shadow:0 0 0 1px var(--line)}
+.wys:focus{box-shadow:0 0 0 2px var(--amber-soft)}
+.wys .tbl table{min-width:0}
+.wys td,.wys th{box-shadow:inset 0 0 0 1px var(--line);padding:8px 10px!important;min-width:60px}
+.wys li > input[type="checkbox"]{cursor:pointer}
+.linkrow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.linkrow .in{flex:1 1 240px}
 .mdtools button{border:0;background:var(--surf);border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
 .mdtools button:hover{color:var(--ink);background:var(--surf2)}
 .mdedit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
@@ -435,7 +446,7 @@ const S = {
   posts:new Map(), hooks:new Map(), bodies:new Map(), ctas:new Map(), strategy:new Map(), ideas:new Map(),
   campaigns:new Map(), comments:new Map(), log:[], thr:null, loaded:{},
   campaign:null, canWrite:true, me:null, view:"plan", openPost:null, drTab:"script",
-  f:{stream:"all", status:"all", q:""}, cal:{mode:"week", anchor:null, tz:"et"}, editLib:null, libTab:"night", editSec:null, hookSort:"code", hookFilter:"all",
+  f:{stream:"all", status:"all", q:""}, cal:{mode:"week", anchor:null, tz:"et"}, editMode:"visual", secDraft:null, linkOpen:false, editLib:null, libTab:"night", editSec:null, hookSort:"code", hookFilter:"all",
   ideaFilter:"all", metricsScope:"camp", newCamp:false, ideaPlan:null, confirmDel:false
 };
 let db = null, user = null, assets = null, downloads = null;
@@ -541,7 +552,7 @@ const BODY_RE = /\b(?:B-\d{2}|R-\d)\b/g;
 
 /* ---------- render scheduling ---------- */
 let rq = false, pendMain = false, pendDr = false;
-function editingIn(el){ const a = document.activeElement; return a && el && el.contains(a) && (a.matches("input,textarea,select") ); }
+function editingIn(el){ const a = document.activeElement; return a && el && el.contains(a) && (a.matches("input,textarea,select") || a.isContentEditable); }
 function schedule(){ if(rq) return; rq = true; requestAnimationFrame(() => { rq = false; renderAll(); }); }
 function renderAll(){
   const main = $("#main"), dr = $("#drBody");
@@ -549,6 +560,8 @@ function renderAll(){
   if(!$("#drawer").hidden){ if(editingIn(dr)) pendDr = true; else { pendDr = false; renderDrawer(); } }
   renderChrome();
 }
+document.addEventListener("focusout", e => { if(e.target && e.target.id === "secWys" && canVisual()) S.secDraft = wysToMd(e.target); });
+document.addEventListener("change", e => { if(e.target.matches && e.target.matches('#secWys input[type="checkbox"]')) S.secDraft = wysToMd($("#secWys")); }, true);
 document.addEventListener("focusout", () => { if(pendMain || pendDr) setTimeout(() => { if(pendMain||pendDr) schedule(); }, 300); });
 
 /* ---------- chrome ---------- */
@@ -864,6 +877,53 @@ function mdRender(src, secId){
     return secId != null && line != null ? `<input type="checkbox" data-ck="${esc(secId)}:${line}"${on?" checked":""} aria-label="Отметить пункт">` : `<input type="checkbox" disabled${on?" checked":""}>`; });
   return html.replace(/<table>/g, '<div class="tbl"><table>').replace(/<\/table>/g, "</table></div>").replace(/<a href=/g, '<a target="_blank" rel="noopener" href=');
 }
+const WYS_TOOLS = [["h","Заголовок"],["p","Обычный текст"],["b","Жирный"],["i","Курсив"],["ul","Список"],["ol","Нумерация"],["ck","Галочка"],["link","Ссылка"],["quote","Цитата"],["tbl","Таблица"],["row","+ строка"],["col","+ колонка"],["delrow","− строка"],["delcol","− колонка"]];
+let _td = null;
+function turndown(){
+  if(_td || !window.TurndownService) return _td;
+  _td = new window.TurndownService({headingStyle:"atx", bulletListMarker:"-", codeBlockStyle:"fenced", emDelimiter:"*", strongDelimiter:"**", br:""});
+  if(window.turndownPluginGfm) _td.use(window.turndownPluginGfm.gfm);
+  _td.addRule("unwrapTbl", {filter: n => n.nodeName === "DIV" && n.classList && n.classList.contains("tbl"), replacement: c => "\n\n" + c.trim() + "\n\n"});
+  return _td;
+}
+const canVisual = () => !!(window.TurndownService && window.marked && window.DOMPurify);
+function wysToMd(el){
+  const c = el.cloneNode(true);
+  c.querySelectorAll('input[type="checkbox"]').forEach((x, i) => { const live = el.querySelectorAll('input[type="checkbox"]')[i]; if(live && live.checked) x.setAttribute("checked", ""); else x.removeAttribute("checked"); });
+  c.querySelectorAll("td,th").forEach(x => { x.innerHTML = x.innerHTML.replace(/<br\s*\/?>/gi, " "); });
+  return turndown().turndown(c.innerHTML).replace(/\n{3,}/g, "\n\n").trim();
+}
+function editorHtml(md){ return mdRender(md, "").replace(/<input type="checkbox" disabled( checked)?>/g, (m, on) => `<input type="checkbox"${on ? " checked" : ""}>`); }
+function curSecText(){
+  const w = $("#secWys"); if(w) return wysToMd(w);
+  const t = $("#secBody"); return t ? t.value : null;
+}
+function cellOf(){ const sel = window.getSelection(); if(!sel.rangeCount) return null; let n = sel.anchorNode; if(n && n.nodeType === 3) n = n.parentNode; return n && n.closest ? n.closest("td,th") : null; }
+function wysCmd(kind){
+  const w = $("#secWys"); if(!w) return; w.focus();
+  const ex = (c, v) => document.execCommand(c, false, v);
+  if(kind === "b") ex("bold"); else if(kind === "i") ex("italic");
+  else if(kind === "h") ex("formatBlock", "<h3>"); else if(kind === "p") ex("formatBlock", "<p>");
+  else if(kind === "quote") ex("formatBlock", "<blockquote>");
+  else if(kind === "ul") ex("insertUnorderedList"); else if(kind === "ol") ex("insertOrderedList");
+  else if(kind === "ck"){ const sel = window.getSelection(); let n = sel.anchorNode; if(n && n.nodeType === 3) n = n.parentNode;
+    if(!(n && n.closest && n.closest("li"))) ex("insertUnorderedList");
+    ex("insertHTML", '<input type="checkbox">&nbsp;'); }
+  else if(kind === "link"){ const sel = window.getSelection(); S._linkRange = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null; S.linkOpen = true;
+    const r = $("#linkRow"); if(r){ r.hidden = false; $("#linkUrl").value = ""; $("#linkUrl").focus(); } return; }
+  else if(kind === "tbl") ex("insertHTML", '<table><thead><tr><th>Колонка 1</th><th>Колонка 2</th></tr></thead><tbody><tr><td>Текст</td><td>Текст</td></tr></tbody></table><p><br></p>');
+  else { const cell = cellOf(); if(!cell){ toast("Поставьте курсор в ячейку таблицы"); return; }
+    const tr = cell.parentNode, table = cell.closest("table"), ci = [...tr.children].indexOf(cell);
+    if(kind === "row"){ const nr = document.createElement("tr"); [...tr.children].forEach(() => { const td = document.createElement("td"); td.innerHTML = "<br>"; nr.appendChild(td); });
+      if(tr.parentNode.nodeName === "THEAD"){ let tb = table.tBodies[0]; if(!tb){ tb = document.createElement("tbody"); table.appendChild(tb); } tb.insertBefore(nr, tb.firstChild); } else tr.after(nr); }
+    else if(kind === "col"){ table.querySelectorAll("tr").forEach(r => { const ref = r.children[ci]; const nc = document.createElement(r.parentNode.nodeName === "THEAD" ? "th" : "td"); nc.innerHTML = "<br>"; if(ref) ref.after(nc); else r.appendChild(nc); }); }
+    else if(kind === "delrow"){ if(tr.parentNode.nodeName === "THEAD"){ toast("Строку заголовков удалить нельзя"); return; } tr.remove(); }
+    else if(kind === "delcol"){ const rows = table.querySelectorAll("tr"); if(rows[0] && rows[0].children.length <= 1){ table.closest(".tbl") ? table.closest(".tbl").remove() : table.remove(); } else rows.forEach(r => r.children[ci] && r.children[ci].remove()); }
+  }
+}
+document.addEventListener("mousedown", e => { if(e.target.closest && e.target.closest("[data-wys]")) e.preventDefault(); });
+document.addEventListener("paste", e => { const w = e.target.closest && e.target.closest("#secWys"); if(!w) return; e.preventDefault();
+  const t = (e.clipboardData || window.clipboardData).getData("text/plain"); document.execCommand("insertText", false, t); });
 const MD_TOOLS = [["h","Заголовок"],["b","Жирный"],["i","Курсив"],["ul","Список"],["ol","Нумерация"],["ck","Галочка"],["tbl","Таблица"],["link","Ссылка"],["quote","Цитата"]];
 function mdInsert(ta, kind){
   const a = ta.selectionStart, b = ta.selectionEnd, v = ta.value, sel = v.slice(a, b);
@@ -928,11 +988,21 @@ function vStrategy(){
     o += `<section class="sec" id="sec-${esc(s.id)}"><div class="sec-h">${editing ? `<input class="in" id="secTitle" value="${esc(s.title)}" aria-label="Название раздела" style="font:700 20px var(--f-display)">` : `<h2>${esc(s.title)}</h2>`}
       ${editing ? "" : `<button class="btn sm ghost w" data-act="editsec" data-id="${esc(s.id)}">Изменить</button>`}</div>`;
     if(editing){
-      o += `<div class="mdtools" role="toolbar" aria-label="Оформление">${MD_TOOLS.map(([k,l]) => `<button type="button" data-act="mdins" data-v="${k}">${l}</button>`).join("")}</div>
-        <div class="mdedit"><textarea class="ta" id="secBody" spellcheck="true" style="min-height:${Math.min(640, 160 + (s.body||"").split("\n").length*22)}px" aria-label="Текст раздела в Markdown">${esc(s.body||"")}</textarea>
-        <div class="md mdprev" id="secPrev" aria-live="polite">${mdRender(s.body)}</div></div>
-        <p class="faint" style="font-size:12.5px;margin:6px 0">Текст пишется в Markdown, справа сразу видно, как он будет выглядеть. Таблице нужна строка «| --- | --- |» под заголовком.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="savesec" data-id="${esc(s.id)}">Сохранить</button><button class="btn ghost" data-act="cancelsec">Отмена</button>
+      const draft = S.secDraft != null ? S.secDraft : (s.body || "");
+      const visual = S.editMode === "visual" && canVisual();
+      const modeSeg = canVisual() ? `<div class="seg" role="group" aria-label="Режим редактора">${[["visual","Как на сайте"],["md","Markdown"]].map(([k,l]) => `<button type="button" data-act="edmode" data-v="${k}" aria-pressed="${(visual?"visual":"md")===k}">${l}</button>`).join("")}</div>` : "";
+      if(visual){
+        o += `<div class="mdtools" role="toolbar" aria-label="Оформление">${modeSeg}${WYS_TOOLS.map(([k,l]) => `${k==="tbl"?'<span class="gap"></span>':""}<button type="button" data-wys data-act="wys" data-v="${k}">${l}</button>`).join("")}</div>
+          <div class="linkrow" id="linkRow" hidden><input class="in" id="linkUrl" type="url" placeholder="https://…" aria-label="Адрес ссылки"><button class="btn sm pri" data-act="linkok">Вставить ссылку</button><button class="btn sm ghost" data-act="linkcancel">Отмена</button></div>
+          <div class="md wys" id="secWys" contenteditable="true" spellcheck="true" aria-label="Текст раздела">${editorHtml(draft)}</div>
+          <p class="faint" style="font-size:12.5px;margin:6px 0">Правьте текст как обычный документ. Кнопки строк и колонок работают, когда курсор стоит в таблице.</p>`;
+      } else {
+        o += `<div class="mdtools" role="toolbar" aria-label="Оформление">${modeSeg}${MD_TOOLS.map(([k,l]) => `<button type="button" data-act="mdins" data-v="${k}">${l}</button>`).join("")}</div>
+          <div class="mdedit"><textarea class="ta" id="secBody" spellcheck="true" style="min-height:${Math.min(640, 160 + draft.split("\n").length*22)}px" aria-label="Текст раздела в Markdown">${esc(draft)}</textarea>
+          <div class="md mdprev" id="secPrev" aria-live="polite">${mdRender(draft)}</div></div>
+          <p class="faint" style="font-size:12.5px;margin:6px 0">Текст пишется в Markdown, справа видно, как он будет выглядеть.</p>`;
+      }
+      o += `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="savesec" data-id="${esc(s.id)}">Сохранить</button><button class="btn ghost" data-act="cancelsec">Отмена</button>
         <span style="flex:1"></span><button class="btn ghost danger" data-act="delsec" data-id="${esc(s.id)}">Удалить раздел</button></div>`;
     } else {
       o += `<div class="md">${mdRender(s.body, s.id)}</div>`;
@@ -1310,10 +1380,17 @@ document.addEventListener("click", async e => {
       if(c.id !== S.campaign){ S.campaign = c.id; }
       const w = c.start ? Math.max(1, Math.floor((parseD(date) - parseD(c.start)) / (7*864e5)) + 1) : 1;
       createPost(w, {date, time:"23:30", stream:"N"}); break; }
-    case "editsec": S.editSec = id; renderMain(); setTimeout(()=>$("#secBody")?.focus(), 30); break;
-    case "cancelsec": S.editSec = null; renderMain(); break;
-    case "savesec": { const s = S.strategy.get(id); const title = $("#secTitle").value.trim() || s.title, body = $("#secBody").value;
-      S.editSec = null;
+    case "editsec": S.editSec = id; S.secDraft = null; renderMain(); setTimeout(()=>($("#secWys") || $("#secBody"))?.focus(), 30); break;
+    case "cancelsec": S.editSec = null; S.secDraft = null; renderMain(); break;
+    case "edmode": { const cur = curSecText(); if(cur != null) S.secDraft = cur; S.editMode = v; renderMain(); break; }
+    case "wys": wysCmd(v); break;
+    case "linkok": { const u = $("#linkUrl").value.trim(); $("#linkRow").hidden = true;
+      if(!/^https?:\/\//.test(u)){ toast("Ссылка должна начинаться с https://"); break; }
+      const w = $("#secWys"); w.focus(); const sel = window.getSelection(); if(S._linkRange){ sel.removeAllRanges(); sel.addRange(S._linkRange); }
+      if(sel.isCollapsed) document.execCommand("insertHTML", false, `<a href="${esc(u)}">${esc(u)}</a>`); else document.execCommand("createLink", false, u); break; }
+    case "linkcancel": $("#linkRow").hidden = true; $("#secWys")?.focus(); break;
+    case "savesec": { const s = S.strategy.get(id); const title = $("#secTitle").value.trim() || s.title, body = curSecText() ?? s.body;
+      S.editSec = null; S.secDraft = null;
       if(body !== s.body || title !== s.title){ const hist = [...(s.history||[]), {at: s.updatedAt || nowIso(), by: s.updatedBy || null, title: s.title, body: s.body}].slice(-15);
         await upd("strategy/" + id, {title, body, history: hist}); logIt(`обновил(а) раздел стратегии «${title}»`); toast("Раздел сохранён"); }
       renderMain(); break; }
@@ -1381,7 +1458,8 @@ document.addEventListener("input", e => {
   const t = e.target;
   if(t.id === "fQ"){ S.f.q = t.value; clearTimeout(t._d); t._d = setTimeout(() => { const pos = t.selectionStart; renderMain(); const n = $("#fQ"); if(n){ n.focus(); n.setSelectionRange(pos,pos); } }, 200); }
   if(t.matches("table.sc textarea")) autoH(t);
-  if(t.id === "secBody"){ clearTimeout(t._p); t._p = setTimeout(() => { const pv = $("#secPrev"); if(pv) pv.innerHTML = mdRender(t.value); }, 120); }
+  if(t.id === "secBody"){ S.secDraft = t.value; clearTimeout(t._p); t._p = setTimeout(() => { const pv = $("#secPrev"); if(pv) pv.innerHTML = mdRender(t.value); }, 120); }
+  if(t.id === "secWys"){ clearTimeout(t._p); t._p = setTimeout(() => { if(document.body.contains(t)) S.secDraft = wysToMd(t); }, 400); }
 });
 document.addEventListener("dragover", e => { const d = e.target.closest?.("#drop"); if(d){ e.preventDefault(); d.classList.add("on"); } });
 document.addEventListener("dragleave", e => { const d = e.target.closest?.("#drop"); if(d) d.classList.remove("on"); });
