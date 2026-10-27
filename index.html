@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Somni Контент</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Onest:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: sticky header with tabs, one working column up to 1180px; publication opens in a right-hand panel. Somni night palette first. */
+:root{
+  --bg:#0E0917; --bg2:#140E22; --surf:#1B1430; --surf2:#251C3E; --line:rgba(245,237,225,.07);
+  --ink:#F5EDE1; --muted:#A99CBB; --faint:#75688A;
+  --amber:#FFC15E; --amber-ink:#FFC15E; --amber-soft:rgba(255,193,94,.14);
+  --night:#C3B2FF; --night-soft:rgba(139,116,217,.2);
+  --good:#7BD3A0; --good-soft:rgba(123,211,160,.15);
+  --mid:#E9C46A; --mid-soft:rgba(233,196,106,.15);
+  --bad:#F08A8A; --bad-soft:rgba(240,138,138,.15);
+  --blue:#8EC5FF; --blue-soft:rgba(142,197,255,.14);
+  --scrim:rgba(5,3,10,.6);
+  --f-display:"Bricolage Grotesque", "Onest", system-ui, sans-serif;
+  --f-body:"Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F6F3FA; --bg2:#FBF9FD; --surf:#EDE7F5; --surf2:#E2D8EF; --line:rgba(27,20,40,.08);
+  --ink:#1B1428; --muted:#62577A; --faint:#8D82A0;
+  --amber:#FFC15E; --amber-ink:#8A5A00; --amber-soft:rgba(255,193,94,.28);
+  --night:#5B43B8; --night-soft:rgba(91,67,184,.12);
+  --good:#1E7A4B; --good-soft:rgba(30,122,75,.12);
+  --mid:#8A6300; --mid-soft:rgba(176,128,0,.13);
+  --bad:#B33A3A; --bad-soft:rgba(179,58,58,.11);
+  --blue:#2A63A8; --blue-soft:rgba(42,99,168,.11);
+  --scrim:rgba(27,20,40,.35); color-scheme:light;
+}}
+:root[data-theme="light"]{
+  --bg:#F6F3FA; --bg2:#FBF9FD; --surf:#EDE7F5; --surf2:#E2D8EF; --line:rgba(27,20,40,.08);
+  --ink:#1B1428; --muted:#62577A; --faint:#8D82A0;
+  --amber:#FFC15E; --amber-ink:#8A5A00; --amber-soft:rgba(255,193,94,.28);
+  --night:#5B43B8; --night-soft:rgba(91,67,184,.12);
+  --good:#1E7A4B; --good-soft:rgba(30,122,75,.12);
+  --mid:#8A6300; --mid-soft:rgba(176,128,0,.13);
+  --bad:#B33A3A; --bad-soft:rgba(179,58,58,.11);
+  --blue:#2A63A8; --blue-soft:rgba(42,99,168,.11);
+  --scrim:rgba(27,20,40,.35); color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4vw,38px);line-height:1.1}
+h2{font-size:22px;line-height:1.2}
+h3{font-size:17px}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.num{font-variant-numeric:tabular-nums}
+.code{font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.top-in{display:flex;align-items:center;gap:14px;padding-block:14px 6px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:10px}
+.brand i{color:var(--amber);font-style:normal}
+.brand small{font:500 13px var(--f-body);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.camp{margin-left:auto;display:flex;gap:8px;align-items:center}
+.sel{appearance:none;background:var(--surf);border:0;border-radius:10px;padding:8px 32px 8px 12px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 52%,calc(100% - 11px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.me{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.me img{width:26px;height:26px;border-radius:50%}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:4px 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{text-decoration:none;padding:8px 14px;border-radius:999px;color:var(--muted);white-space:nowrap;font-weight:500}
+.tabs a:hover{color:var(--ink);background:var(--surf)}
+.tabs a[aria-current="page"]{background:var(--amber);color:#1B1206}
+.tabs a .n{font-size:12px;opacity:.7;margin-left:4px}
+
+main{padding-block:18px 80px}
+.vhead{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.vhead p{margin:6px 0 0;max-width:68ch}
+
+/* buttons, inputs */
+.btn{border:0;background:var(--surf);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--surf2)}
+.btn.pri{background:var(--amber);color:#1B1206}
+.btn.pri:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent;color:var(--muted);padding:6px 10px}
+.btn.ghost:hover{color:var(--ink);background:var(--surf)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:default}
+.in,.ta{width:100%;background:var(--surf);border:0;border-radius:10px;padding:9px 12px;outline:none}
+.in:focus,.ta:focus{background:var(--surf2);box-shadow:0 0 0 2px var(--amber-soft)}
+.ta{resize:vertical;min-height:70px;line-height:1.5}
+.lab{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:6px;display:block}
+.seg{display:inline-flex;background:var(--surf);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--bg);color:var(--ink)}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:500;white-space:nowrap}
+.s-N{background:var(--night-soft);color:var(--night)}
+.s-D{background:var(--amber-soft);color:var(--amber-ink)}
+.s-ND{background:linear-gradient(90deg,var(--night-soft),var(--amber-soft));color:var(--ink)}
+.st-plan{background:var(--surf2);color:var(--muted)}
+.st-script{background:var(--night-soft);color:var(--night)}
+.st-prod{background:var(--blue-soft);color:var(--blue)}
+.st-ready{background:var(--mid-soft);color:var(--mid)}
+.st-live{background:var(--good-soft);color:var(--good)}
+.v-hit{background:var(--good);color:#0B1A11}
+.v-ok{background:var(--mid-soft);color:var(--mid)}
+.v-miss{background:var(--bad-soft);color:var(--bad)}
+.g-good{color:var(--good)} .g-mid{color:var(--mid)} .g-bad{color:var(--bad)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:currentColor}
+
+/* plan */
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font:700 26px/1 var(--f-display)}
+.stat span{font-size:13px;color:var(--muted)}
+.bar{height:6px;border-radius:6px;background:var(--surf);overflow:hidden;margin-top:8px;min-width:180px;display:flex}
+.bar i{display:block;height:100%}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+.toolbar .in{width:auto;flex:1 1 200px;max-width:320px}
+.toolbar .sp{flex:1}
+.week{margin-top:34px}
+.week-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding-bottom:10px}
+.week-h .wt{flex:1 1 280px;background:transparent;border:0;border-radius:8px;padding:4px 8px;margin-left:-8px;color:var(--muted);font-size:15px}
+.week-h .wt:hover{background:var(--surf)}
+.week-h .wt:focus{background:var(--surf);outline:none;color:var(--ink)}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:120px 66px minmax(0,1fr) 150px 150px;gap:14px;align-items:center;padding:12px 12px;margin:0 -12px;border-radius:12px;text-decoration:none;cursor:pointer}
+.row + .row{box-shadow:0 -1px 0 var(--line)}
+.row:hover{background:var(--surf);box-shadow:none}
+.row:hover + .row{box-shadow:none}
+.r-when b{display:block;font-weight:600}
+.r-when span{font-size:12.5px;color:var(--faint)}
+.r-title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-hook{font-size:13.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-codes{font-size:13px;color:var(--muted)}
+.r-fmt{font-size:13px;color:var(--muted)}
+.r-side{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.r-meta{font-size:12px;color:var(--faint)}
+@media (max-width:900px){
+  .row{grid-template-columns:96px minmax(0,1fr);gap:4px 12px;align-items:start}
+  .r-stream{grid-row:2}
+  .r-main{grid-column:2;grid-row:1/3}
+  .r-fmt{grid-column:2}
+  .r-side{grid-column:2;flex-direction:row;flex-wrap:wrap;align-items:center}
+}
+.empty{padding:40px 0;color:var(--muted);max-width:60ch}
+.newform{background:var(--surf);border-radius:16px;padding:18px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-top:18px;align-items:end}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(820px,100%);background:var(--bg2);z-index:41;display:flex;flex-direction:column;
+  box-shadow:-30px 0 60px rgba(0,0,0,.25);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dr-scroll{overflow-y:auto;flex:1;padding:18px 24px 60px}
+@media (max-width:600px){.dr-scroll{padding:14px 16px 60px}}
+.dr-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.dr-top .code{font-size:14px;color:var(--amber-ink);background:var(--amber-soft);padding:3px 9px;border-radius:8px}
+.dr-title{font:700 24px/1.2 var(--f-display);background:transparent;border:0;width:100%;padding:4px 6px;margin-left:-6px;border-radius:8px}
+.dr-title:hover,.dr-title:focus{background:var(--surf);outline:none}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px 14px;margin:14px 0 6px}
+.meta .wide{grid-column:1/-1}
+.ref{font-size:13.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.ref b{color:var(--ink);font-weight:500}
+.dtabs{display:flex;gap:2px;margin:22px 0 16px;overflow-x:auto;scrollbar-width:none;background:var(--surf);border-radius:12px;padding:3px}
+.dtabs button{border:0;background:transparent;padding:8px 12px;border-radius:9px;cursor:pointer;color:var(--muted);white-space:nowrap;font-weight:500}
+.dtabs button[aria-pressed="true"]{background:var(--bg2);color:var(--ink)}
+.sc-wrap{overflow-x:auto;margin:0 -4px}
+table.sc{border-collapse:separate;border-spacing:4px;width:100%;min-width:620px}
+table.sc th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);font-weight:500;text-align:left;padding:0}
+table.sc th input{background:transparent;border:0;width:100%;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;font-size:12px;padding:2px 4px}
+table.sc td{vertical-align:top;padding:0}
+table.sc td.t{width:64px}
+table.sc textarea{width:100%;border:0;background:var(--surf);border-radius:8px;padding:7px 9px;resize:none;min-height:38px;line-height:1.4;font-size:14px;overflow:hidden;outline:none;display:block}
+table.sc textarea:focus{background:var(--surf2)}
+table.sc td.x{width:28px}
+.prompt{background:var(--surf);border-radius:12px;padding:12px;margin-bottom:10px}
+.prompt textarea{background:transparent;border:0;width:100%;resize:vertical;min-height:90px;font-size:14px;line-height:1.5;outline:none}
+.prompt .pa{display:flex;gap:6px;justify-content:flex-end}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.mitem{background:var(--surf);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.mitem .pv{aspect-ratio:4/5;max-width:100%;background:var(--surf2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:8px}
+.mitem img,.mitem video{width:100%;height:100%;object-fit:cover;display:block}
+.mitem .mi{padding:8px 10px;font-size:12.5px;display:flex;gap:6px;align-items:center;justify-content:space-between}
+.mitem .mi span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drop{border:1.5px dashed var(--surf2);border-radius:14px;padding:18px;text-align:center;color:var(--muted);margin-bottom:14px}
+.drop.on{border-color:var(--amber);color:var(--ink)}
+table.mt{border-collapse:collapse;width:100%}
+table.mt th{text-align:left;font-weight:500;font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;padding:6px 8px}
+table.mt td{padding:4px 8px;border-top:1px solid var(--line)}
+table.mt td:first-child{color:var(--muted);font-size:14px}
+table.mt input{width:100%;max-width:130px;background:var(--surf);border:0;border-radius:8px;padding:6px 9px;text-align:right;font-variant-numeric:tabular-nums}
+.derived{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:18px}
+.dv{background:var(--surf);border-radius:12px;padding:12px 14px}
+.dv b{font:700 22px/1.1 var(--f-display);display:block;margin-top:2px}
+.dv small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+.comment{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.comment img{width:28px;height:28px;border-radius:50%;flex:none}
+.comment .ct{white-space:pre-wrap;margin-top:2px}
+.comment .cm{font-size:12.5px;color:var(--faint)}
+
+/* strategy */
+.strat{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px}
+.toc{position:sticky;top:120px;align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 140px);overflow:auto}
+.toc a{text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:8px;font-size:14px}
+.toc a:hover{background:var(--surf);color:var(--ink)}
+@media (max-width:900px){.strat{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+.sec{padding-block:26px;scroll-margin-top:130px}
+.sec + .sec{border-top:1px solid var(--line)}
+.sec-h{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:12px}
+.md{max-width:76ch}
+.md p{margin:0 0 12px}
+.md h3{margin:18px 0 8px;font-size:16px}
+.md ul,.md ol{margin:0 0 12px;padding-left:20px}
+.md li{margin:4px 0}
+.md li.ck{list-style:none;margin-left:-20px;display:flex;gap:10px;align-items:flex-start}
+.md li.ck input{margin-top:5px;accent-color:var(--amber);width:16px;height:16px;flex:none}
+.md li.ck.done span{color:var(--muted);text-decoration:line-through}
+.tbl{overflow-x:auto;margin:6px 0 14px;max-width:100%}
+.tbl table{border-collapse:collapse;min-width:560px;font-size:14px}
+.tbl th{text-align:left;font-weight:600;padding:8px 12px 8px 0;vertical-align:bottom;border-bottom:1px solid var(--surf2)}
+.tbl td{padding:9px 12px 9px 0;vertical-align:top;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-weight:500}
+.sec-foot{font-size:12.5px;color:var(--faint);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+details.hist summary{cursor:pointer;color:var(--muted)}
+.hv{background:var(--surf);border-radius:12px;padding:12px 14px;margin-top:8px;font-size:13.5px}
+.hv pre{white-space:pre-wrap;font:inherit;margin:6px 0 0;max-height:240px;overflow:auto;color:var(--muted)}
+
+/* library */
+.lib-row{display:grid;grid-template-columns:62px minmax(0,1fr) 130px 210px;gap:14px;padding:13px 12px;margin:0 -12px;border-radius:12px;align-items:start}
+.lib-row + .lib-row{box-shadow:0 -1px 0 var(--line)}
+.lib-row:hover{background:var(--surf);box-shadow:none}
+.lib-row:hover + .lib-row{box-shadow:none}
+.lib-row .lt{font-weight:500}
+.lib-row .ls{font-size:13px;color:var(--muted);margin-top:3px}
+.perf{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.perf b{font-weight:600}
+@media (max-width:820px){.lib-row{grid-template-columns:54px minmax(0,1fr)}.lib-row .lc,.lib-row .perf{grid-column:2}}
+.grp-h{margin:30px 0 6px;display:flex;gap:10px;align-items:baseline}
+.grp-h .faint{font-size:14px}
+.editbox{grid-column:1/-1;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));background:var(--surf);border-radius:14px;padding:14px;margin-top:6px}
+.editbox .full{grid-column:1/-1}
+.editbox .in,.editbox .ta{background:var(--bg2)}
+
+/* ideas */
+.composer{background:var(--surf);border-radius:16px;padding:16px;display:grid;gap:10px}
+.composer .ta{background:var(--bg2);min-height:80px}
+.composer .cr{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.idea{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}
+.idea .it{white-space:pre-wrap;font-size:15.5px}
+.idea .im{font-size:12.5px;color:var(--faint);display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.idea .ia{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:640px){.idea{grid-template-columns:1fr}.idea .ia{justify-content:flex-start}}
+
+/* metrics */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.tile{background:var(--surf);border-radius:16px;padding:16px}
+.tile b{display:block;font:700 30px/1.05 var(--f-display);margin:6px 0 2px}
+.tile small{color:var(--muted);font-size:12.5px}
+.panel{margin-top:34px}
+.panel > h2{margin-bottom:12px}
+.cmp{display:grid;gap:14px;max-width:720px}
+.cmp-row .cl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.cmp-bars{display:grid;gap:4px}
+.cmp-bars div{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.cmp-bars i{display:block;height:10px;border-radius:5px;min-width:2px}
+.cmp-bars span{width:46px}
+table.data{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+table.data th{text-align:left;font-weight:500;color:var(--faint);font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px 8px 0}
+table.data td{padding:9px 12px 9px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+table.data input{width:80px;background:var(--surf);border:0;border-radius:8px;padding:5px 8px;text-align:right}
+.note{background:var(--surf);border-radius:16px;padding:16px 18px;max-width:76ch;color:var(--muted)}
+.note b{color:var(--ink)}
+
+/* history */
+.log{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line);align-items:flex-start}
+.log img{width:24px;height:24px;border-radius:50%;flex:none;margin-top:2px}
+.log .lt{flex:1}
+.log time{font-size:12.5px;color:var(--faint);white-space:nowrap}
+.day-h{margin:26px 0 4px;font-size:13px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+
+.legend{max-width:860px}
+.lg-sec{padding-block:22px}
+.lg-sec + .lg-sec{border-top:1px solid var(--line)}
+.lg-sec h2{margin-bottom:10px}
+.lg-sec p{margin:0 0 12px;max-width:70ch;color:var(--muted)}
+.lg{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px 20px;align-items:baseline}
+.lg-t{font-weight:600}
+.lg-d{max-width:66ch}
+@media (max-width:560px){.lg{grid-template-columns:1fr;gap:2px}.lg-d{margin-bottom:10px}}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
+.ro .w{display:none!important}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slide .22s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="supabase-shim.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-in">
+      <div class="brand">somni<i>.</i> <small>контент</small></div>
+      <div class="camp">
+        <label for="campSel" class="faint" style="font-size:13px">Кампания</label>
+        <select id="campSel" class="sel"></select>
+      </div>
+      <div class="me" id="me"></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Разделы">
+      <a href="#plan" data-v="plan">План</a>
+      <a href="#strategy" data-v="strategy">Стратегия</a>
+      <a href="#hooks" data-v="hooks">Хуки</a>
+      <a href="#library" data-v="library">Тела и призывы</a>
+      <a href="#ideas" data-v="ideas">Идеи</a>
+      <a href="#metrics" data-v="metrics">Метрики</a>
+      <a href="#history" data-v="history">История</a>
+      <a href="#legend" data-v="legend">Легенда</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="main">
+  <div class="empty"><h2>Загружаем контент-план</h2><p>Здесь появятся календарь публикаций, стратегия, хуки и метрики команды.</p></div>
+</main>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Публикация"><div class="dr-scroll" id="drBody"></div></aside>
+<div id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+/* ---------- constants ---------- */
+const STREAMS = {N:"Ночь", D:"День", ND:"Оба"};
+const STATUSES = [["plan","План"],["script","Сценарий"],["prod","Производство"],["ready","Готово"],["live","Опубликовано"]];
+const STATUS_L = Object.fromEntries(STATUSES);
+const VERDICTS = [["hit","Залетело"],["ok","Нормально"],["miss","Не залетело"]];
+const VERDICT_L = Object.fromEntries(VERDICTS);
+const FORMATS = {F1:"Ночной POV",F2:"Метод с Lumi",F3:"Говорящая голова",F4:"Экран приложения",F5:"Стоп-кадр вне темы",F6:"Карусель"};
+const HOOK_STATUS = [["test","В тесте"],["works","Работает"],["weak","Слабый"],["arch","Архив"]];
+const HOOK_STATUS_L = Object.fromEntries(HOOK_STATUS);
+const HS_CLASS = {test:"st-script",works:"st-live",weak:"v-miss",arch:"st-plan"};
+const IDEA_STATUS = [["new","Новая"],["take","Берём"],["planned","В плане"],["later","Отложили"]];
+const IDEA_L = Object.fromEntries(IDEA_STATUS);
+const IDEA_CLASS = {new:"st-script",take:"st-ready",planned:"st-live",later:"st-plan"};
+const IDEA_KINDS = ["Хук","Тело","Формат","Тема","Призыв","Другое"];
+const HOOK_GROUPS = {A:"Узнавание 3 a.m.",B:"Метод прямо сейчас",C:"Наука и имена (RTB)",D:"Юмор и жизнь после 40",E:"Миф и неожиданный факт",F:"Списки и «сохрани»",G:"Стоп-кадр вне темы (F5)",H:"Приложение в кадре"};
+const MF = [["views","Просмотры"],["reach","Охват"],["skip","Пропуски в первые 3 с, %"],["avgWatch","Средний просмотр, % длины"],["saves","Сохранения"],["shares","Пересылки"],["comments","Комментарии"],["profile","Переходы в профиль"],["follows","Подписки"],["keywords","Кодовые слова"],["clicks","Клики по ссылке"],["installs","Установки"]];
+const DERIVED = [["skip","Пропуски в первые 3 с","%"],["avgWatch","Средний просмотр","%"],["saveShare","Сохранения + пересылки","%"],["commentRate","Комментарии","%"],["profileRate","Переходы в профиль от охвата","%"],["kwPer1000","Кодовые слова на 1000",""],["installRate","Клики → установки","%"]];
+const REEL_COLS = ["Время","Визуал","Текст на экране","Голос Lumi"];
+const DOW = ["Вс","Пн","Вт","Ср","Чт","Пт","Сб"];
+const MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+
+/* ---------- state ---------- */
+const S = {
+  posts:new Map(), hooks:new Map(), bodies:new Map(), ctas:new Map(), strategy:new Map(), ideas:new Map(),
+  campaigns:new Map(), comments:new Map(), log:[], thr:null, loaded:{},
+  campaign:null, canWrite:true, me:null, view:"plan", openPost:null, drTab:"script",
+  f:{stream:"all", status:"all", q:""}, editLib:null, libTab:"night", editSec:null, hookSort:"code", hookFilter:"all",
+  ideaFilter:"all", metricsScope:"camp", newCamp:false, ideaPlan:null, confirmDel:false
+};
+let db = null, user = null, assets = null, downloads = null;
+const names = {}; const avatars = {};
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nowIso = () => new Date().toISOString();
+const pad = n => String(n).padStart(2,"0");
+function parseD(s){ const [y,m,d] = String(s).split("-").map(Number); return new Date(Date.UTC(y,(m||1)-1,d||1)); }
+function fmtD(s){ if(!s) return "—"; const d = parseD(s); return DOW[d.getUTCDay()]+" "+d.getUTCDate()+"."+pad(d.getUTCMonth()+1); }
+function fmtLong(s){ if(!s) return ""; const d = parseD(s); return d.getUTCDate()+" "+MONTHS[d.getUTCMonth()]; }
+function firstSunday(y,m){ const dw = new Date(Date.UTC(y,m,1)).getUTCDay(); return 1 + (7 - dw) % 7; }
+function etOffset(date){ const d = parseD(date); const y = d.getUTCFullYear();
+  const start = Date.UTC(y,2,firstSunday(y,2)+7), end = Date.UTC(y,10,firstSunday(y,10));
+  return (d.getTime() >= start && d.getTime() < end) ? -4 : -5; }
+function toMsk(date,time){ if(!date||!time) return ""; const [h,mi] = time.split(":").map(Number); const d = parseD(date);
+  const utc = Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),h,mi) - etOffset(date)*3600e3;
+  const m = new Date(utc + 3*3600e3); const shift = m.getUTCDate() !== d.getUTCDate();
+  return pad(m.getUTCHours())+":"+pad(m.getUTCMinutes())+" МСК"+(shift?" (след. день)":""); }
+function ago(iso){ if(!iso) return ""; const d = new Date(iso); const diff = (Date.now()-d)/1000;
+  if(diff<60) return "только что"; if(diff<3600) return Math.floor(diff/60)+" мин назад"; if(diff<86400) return Math.floor(diff/3600)+" ч назад";
+  return d.getDate()+" "+MONTHS[d.getMonth()]+", "+pad(d.getHours())+":"+pad(d.getMinutes()); }
+function plural(n,a,b,c){ n=Math.abs(n)%100; const n1=n%10; if(n>10&&n<20) return c; if(n1>1&&n1<5) return b; if(n1===1) return a; return c; }
+const fmtN = (v,dec=0) => v==null||isNaN(v) ? "—" : Number(v).toLocaleString("ru-RU",{maximumFractionDigits:dec,minimumFractionDigits:dec});
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(()=>t.hidden=true, 2600); }
+const sortBy = (arr,f) => arr.sort((a,b)=> (f(a)>f(b)?1:f(a)<f(b)?-1:0));
+const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; };
+const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+function nameOf(id){ return id ? (names[id] || "Участник") : "Команда"; }
+function avatarOf(id){ return avatars[id] || ""; }
+async function ensureNames(ids){
+  if(!user) return; const need = [...new Set(ids.filter(id => id && !(id in names)))]; if(!need.length) return;
+  need.forEach(id => names[id] = names[id] || "");
+  try { const ps = await user.profiles(need); let changed=false;
+    for(const id of need){ const p = ps[id]; if(p){ if(p.name && names[id]!==p.name){ names[id]=p.name; changed=true; } avatars[id]=p.avatarUrl; } }
+    if(changed) schedule(); } catch(e){}
+}
+
+/* ---------- metrics ---------- */
+function thrMap(){ const m = {}; (S.thr?.items||[]).forEach(t => m[t.key]=t); return m; }
+function finalM(p){ const m7 = p.m7||{}, m48 = p.m48||{}; return Object.keys(m7).some(k=>typeof m7[k]==="number") ? m7 : m48; }
+function hasM(p){ const m = finalM(p); return Object.values(m).some(v => typeof v === "number"); }
+function derive(m){ const v = k => typeof m[k]==="number" ? m[k] : null; const r = {};
+  r.skip = v("skip"); r.avgWatch = v("avgWatch"); r.views = v("views"); r.follows = v("follows");
+  if(v("views")){ if(v("saves")!=null||v("shares")!=null) r.saveShare = ((v("saves")||0)+(v("shares")||0))/v("views")*100;
+    if(v("comments")!=null) r.commentRate = v("comments")/v("views")*100;
+    if(v("keywords")!=null) r.kwPer1000 = v("keywords")/v("views")*1000;
+    if(v("follows")!=null) r.followPer1000 = v("follows")/v("views")*1000; }
+  if(v("reach") && v("profile")!=null) r.profileRate = v("profile")/v("reach")*100;
+  if(v("clicks") && v("installs")!=null) r.installRate = v("installs")/v("clicks")*100;
+  return r; }
+function grade(key,val){ const t = thrMap()[key]; if(val==null||!t) return "";
+  const g = Number(t.good), b = Number(t.bad);
+  if(t.dir==="low") return val<=g ? "good" : val>b ? "bad" : "mid";
+  return val>=g ? "good" : val<b ? "bad" : "mid"; }
+function aggregate(posts){ const out = {n:0}; const acc = {};
+  posts.forEach(p => { if(!hasM(p)) return; out.n++; const d = derive(finalM(p));
+    for(const k in d){ if(d[k]!=null){ (acc[k] = acc[k]||[]).push(d[k]); } } });
+  for(const k in acc) out[k] = k==="views" ? median(acc[k]) : mean(acc[k]);
+  return out; }
+function perfLine(posts){
+  if(!posts.length) return '<span class="faint">Пока не стоит в плане.</span>';
+  const a = aggregate(posts); const hits = posts.filter(p=>p.verdict==="hit").length, miss = posts.filter(p=>p.verdict==="miss").length;
+  let s = `<span>В плане: ${posts.map(p=>`<a href="#post-${esc(p.id)}">${esc(p.code)}</a>`).join(", ")}.</span>`;
+  if(a.n && (a.skip!=null || a.saveShare!=null)) s += `<span>${a.skip!=null?`Пропуски <b class="g-${grade("skip",a.skip)}">${fmtN(a.skip,0)}%</b>`:""}${a.skip!=null&&a.saveShare!=null?", ":""}${a.saveShare!=null?`сохранения и пересылки <b class="g-${grade("saveShare",a.saveShare)}">${fmtN(a.saveShare,1)}%</b>`:""}.</span>`;
+  if(hits) s += `<span class="g-good">Залетело ${hits} ${plural(hits,"раз","раза","раз")}.</span>`;
+  if(miss) s += `<span class="g-bad">Не залетело ${miss} ${plural(miss,"раз","раза","раз")}.</span>`;
+  return s; }
+
+/* ---------- data access ---------- */
+const queues = {};
+function onWriteErr(e){
+  const code = e && e.code;
+  if(code === "invalid_argument"){ S.canWrite = false; document.body.classList.add("ro"); toast("У вас доступ только на просмотр. Попросите владельца дать права участника."); }
+  else if(code === "quota_exceeded") toast("База заполнена. Удалите старые записи и попробуйте снова.");
+  else if(code === "resource_exhausted") toast("Слишком много изменений подряд. Подождите пару секунд.");
+  else toast("Не удалось сохранить. Проверьте соединение и повторите.");
+}
+function upd(path, patch){
+  if(!db) return Promise.resolve();
+  const body = Object.assign({}, patch, {updatedAt: nowIso(), updatedBy: S.me?.id || null});
+  const p = (queues[path] || Promise.resolve()).then(() => db.doc(path).update(body)).catch(onWriteErr);
+  queues[path] = p; return p;
+}
+function setDoc(path, data){
+  if(!db) return Promise.resolve();
+  const p = (queues[path] || Promise.resolve()).then(() => db.doc(path).set(data)).catch(onWriteErr);
+  queues[path] = p; return p;
+}
+function delDoc(path){ if(!db) return Promise.resolve(); return db.doc(path).delete().catch(onWriteErr); }
+function logIt(text, ref){ if(!db || !S.canWrite) return; db.collection("log").add({at: nowIso(), by: S.me?.id || null, text, ref: ref||""}).catch(()=>{}); }
+const lastLog = {};
+function logOnce(key, text, ref){ const t = Date.now(); if(lastLog[key] && t - lastLog[key] < 10*60e3) return; lastLog[key] = t; logIt(text, ref); }
+
+function campPosts(){ return [...S.posts.values()].filter(p => p.campaign === S.campaign); }
+function curCamp(){ return S.campaigns.get(S.campaign); }
+function hookOf(p){ return p.hook ? S.hooks.get(p.hook) : null; }
+function hookTextOf(p){ const h = hookOf(p); return h ? h.text : (p.hookText || ""); }
+function codesIn(s, re){ return (String(s||"").match(re) || []); }
+const BODY_RE = /\b(?:B-\d{2}|R-\d)\b/g;
+
+/* ---------- render scheduling ---------- */
+let rq = false, pendMain = false, pendDr = false;
+function editingIn(el){ const a = document.activeElement; return a && el && el.contains(a) && (a.matches("input,textarea,select") ); }
+function schedule(){ if(rq) return; rq = true; requestAnimationFrame(() => { rq = false; renderAll(); }); }
+function renderAll(){
+  const main = $("#main"), dr = $("#drBody");
+  if(editingIn(main)) pendMain = true; else { pendMain = false; renderMain(); }
+  if(!$("#drawer").hidden){ if(editingIn(dr)) pendDr = true; else { pendDr = false; renderDrawer(); } }
+  renderChrome();
+}
+document.addEventListener("focusout", () => { if(pendMain || pendDr) setTimeout(() => { if(pendMain||pendDr) schedule(); }, 300); });
+
+/* ---------- chrome ---------- */
+function renderChrome(){
+  document.querySelectorAll("#tabs a").forEach(a => {
+    if(a.dataset.v === S.view) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  const ideasNew = [...S.ideas.values()].filter(i => i.status === "new").length;
+  const ia = document.querySelector('#tabs a[data-v="ideas"]'); ia.innerHTML = "Идеи" + (ideasNew ? `<span class="n">${ideasNew}</span>` : "");
+  const sel = $("#campSel"); const camps = sortBy([...S.campaigns.values()], c => c.start || "");
+  const html = camps.map(c => `<option value="${esc(c.id)}"${c.id===S.campaign?" selected":""}>${esc(c.name)}</option>`).join("") + (S.canWrite ? `<option value="__new">+ Новая кампания</option>` : "");
+  if(sel.innerHTML !== html) sel.innerHTML = html;
+}
+
+/* ---------- views ---------- */
+function renderMain(){
+  const main = $("#main");
+  if(!db){ main.innerHTML = `<div class="empty"><h2>Нет доступа к общей базе</h2><p>${esc(window.SOMNI_NO_DB_TEXT || "Откройте страницу на claude.ai, войдя в аккаунт. Без входа план не загрузится и правки не сохранятся.")}</p></div>`; return; }
+  if(!S.loaded.posts || !S.loaded.campaigns){ return; }
+  const v = S.view;
+  const html = v==="strategy" ? vStrategy() : v==="hooks" ? vHooks() : v==="library" ? vLibrary() : v==="ideas" ? vIdeas() : v==="metrics" ? vMetrics() : v==="history" ? vHistory() : v==="legend" ? vLegend() : vPlan();
+  main.innerHTML = html;
+  main.querySelectorAll("table.sc textarea").forEach(autoH);
+  if(!S.canWrite) lockInputs(main);
+}
+function lockInputs(root){ root.querySelectorAll("input:not([data-free]),textarea:not([data-free]),select:not([data-free])").forEach(el => el.disabled = true); }
+
+/* --- plan --- */
+function vPlan(){
+  const c = curCamp();
+  if(!c) return `<div class="empty"><h2>Кампаний пока нет</h2><p>Создайте первую кампанию через список «Кампания» вверху.</p></div>`;
+  const all = campPosts();
+  const by = st => all.filter(p => p.status === st).length;
+  const total = all.length || 1;
+  const segs = STATUSES.map(([k]) => `<i class="st-${k}" style="width:${by(k)/total*100}%;background:${k==="plan"?"var(--surf2)":k==="script"?"var(--night)":k==="prod"?"var(--blue)":k==="ready"?"var(--mid)":"var(--good)"}"></i>`).join("");
+  const q = S.f.q.trim().toLowerCase();
+  const posts = all.filter(p => (S.f.stream==="all" || p.stream===S.f.stream) && (S.f.status==="all" || p.status===S.f.status) &&
+    (!q || [p.code,p.title,hookTextOf(p),p.hook,p.body,p.cta,p.test,p.caption].join(" ").toLowerCase().includes(q)));
+  const weeks = (c.weeks && c.weeks.length) ? c.weeks : [...new Set(all.map(p=>p.week))].sort().map(n=>({n,title:"",dates:""}));
+  let out = `<div class="vhead"><div><h1>${esc(c.name)}</h1>
+    <p class="muted">${c.start?`С ${fmtLong(c.start)} по ${fmtLong(c.end)}.`:""} Время в строках указано по Нью-Йорку, под ним московское.</p>
+    <p>${esc(c.goal||"")}</p></div>
+    <div><div class="stats">
+      <div class="stat"><b class="num">${all.length}</b><span>публикаций</span></div>
+      <div class="stat"><b class="num">${by("script")+by("prod")+by("ready")}</b><span>в работе</span></div>
+      <div class="stat"><b class="num">${by("live")}</b><span>опубликовано</span></div>
+      <div class="stat"><b class="num">${all.filter(p=>p.verdict==="hit").length}</b><span>залетело</span></div>
+    </div><div class="bar" title="Статусы публикаций">${segs}</div></div></div>`;
+  out += `<div class="toolbar">
+    <div class="seg" role="group" aria-label="Поток">${[["all","Все"],["N","Ночь"],["D","День"]].map(([k,l])=>`<button data-act="fstream" data-v="${k}" aria-pressed="${S.f.stream===k}">${l}</button>`).join("")}</div>
+    <select class="sel" id="fStatus" data-free aria-label="Статус"><option value="all">Все статусы</option>${STATUSES.map(([k,l])=>`<option value="${k}"${S.f.status===k?" selected":""}>${l}</option>`).join("")}</select>
+    <input class="in" id="fQ" data-free type="search" placeholder="Поиск" value="${esc(S.f.q)}">
+    <span class="sp"></span>
+    <a class="btn ghost" href="#legend">Что значат коды</a>
+    ${downloads ? `<button class="btn" data-act="csv">Выгрузить в Excel</button>` : ""}
+  </div>`;
+  if(S.newCamp) out += newCampForm();
+  for(const w of weeks){
+    const wp = sortBy(posts.filter(p => p.week === w.n), p => (p.date||"")+(p.time||"")+p.code);
+    out += `<section class="week"><div class="week-h"><h2>Неделя ${w.n}</h2><span class="faint">${esc(w.dates||"")}</span>
+      <input class="wt" data-week="${w.n}" value="${esc(w.title||"")}" placeholder="Тема недели" aria-label="Тема недели ${w.n}">
+      <button class="btn sm ghost w" data-act="addpost" data-week="${w.n}">+ Публикация</button></div>
+      <div class="rows">${wp.map(rowHtml).join("") || `<p class="faint" style="margin:4px 0">${posts.length!==all.length?"Нет публикаций по фильтру.":"Пока пусто."}</p>`}</div></section>`;
+  }
+  return out;
+}
+function rowHtml(p){
+  const h = hookOf(p);
+  const hookLine = h ? `“${esc(h.text)}”` : (p.hookText ? esc(p.hookText) : "");
+  const fmt = p.format ? (FORMATS[p.format] || p.format) : (p.kind || "");
+  return `<a class="row" href="#post-${esc(p.id)}">
+    <div class="r-when"><b>${fmtD(p.date)}, ${esc(p.time||"")}</b><span class="num">${esc(toMsk(p.date,p.time).replace(" (след. день)",""))}</span></div>
+    <div class="r-stream"><span class="chip s-${esc(p.stream)}">${STREAMS[p.stream]||"—"}</span></div>
+    <div class="r-main"><div class="r-title"><span class="code faint">${esc(p.code)}</span>&nbsp; ${esc(p.title||"Без названия")}</div>
+      ${hookLine?`<div class="r-hook">${hookLine}</div>`:""}</div>
+    <div class="r-fmt">${esc(fmt)}</div>
+    <div class="r-side"><span class="chip st-${esc(p.status)}">${STATUS_L[p.status]||"План"}</span>${p.verdict?`<span class="chip v-${esc(p.verdict)}">${VERDICT_L[p.verdict]}</span>`:""}</div>
+  </a>`;
+}
+function newCampForm(){
+  return `<div class="newform"><div style="grid-column:1/-1"><h3>Новая кампания</h3><p class="muted" style="margin:4px 0 0">Стратегия, хуки и тела общие для всех кампаний. Прошлые кампании остаются с их цифрами, их можно сравнить во вкладке «Метрики».</p></div>
+    <div><label class="lab" for="ncName">Название</label><input class="in" id="ncName" placeholder="Декабрь 2026"></div>
+    <div><label class="lab" for="ncStart">Первый день (понедельник)</label><input class="in" id="ncStart" type="date"></div>
+    <div><label class="lab" for="ncWeeks">Недель</label><input class="in" id="ncWeeks" type="number" min="1" max="12" value="4"></div>
+    <div style="display:flex;gap:8px"><button class="btn pri" data-act="createcamp">Создать</button><button class="btn ghost" data-act="cancelcamp">Отмена</button></div></div>`;
+}
+
+/* --- drawer --- */
+function openPost(id){ S.openPost = id; S.confirmDel = false; $("#drawer").hidden = false; $("#scrim").hidden = false; renderDrawer(); $("#drBody").scrollTop = 0; document.body.style.overflow = "hidden"; }
+function closePost(){ S.openPost = null; $("#drawer").hidden = true; $("#scrim").hidden = true; document.body.style.overflow = "";
+  if(location.hash.startsWith("#post-")) history.replaceState(null, "", "#" + S.view); }
+function opt(list, cur, empty){ return (empty!=null?`<option value="">${esc(empty)}</option>`:"") + list.map(([v,l]) => `<option value="${esc(v)}"${v===cur?" selected":""}>${esc(l)}</option>`).join(""); }
+function renderDrawer(){
+  const p = S.posts.get(S.openPost); const el = $("#drBody");
+  if(!p){ el.innerHTML = `<div class="dr-top"><span class="sp"></span><button class="btn ghost" data-act="close">Закрыть</button></div><p class="muted">Публикация не найдена. Возможно, её удалили.</p>`; return; }
+  const hooks = sortBy([...S.hooks.values()], h=>h.code).map(h => [h.code, h.code+" · "+h.text.slice(0,70)]);
+  const ctas = sortBy([...S.ctas.values()], c=>c.code).map(c => [c.code, c.code+" · "+c.text.slice(0,60)]);
+  const h = hookOf(p), ht = p.hookTrial ? S.hooks.get(p.hookTrial) : null, cta = S.ctas.get(p.cta);
+  const bodyRefs = codesIn(p.body, BODY_RE).map(c => S.bodies.get(c)).filter(Boolean);
+  const nc = [...S.comments.values()].filter(c => c.post === p.id).length;
+  const camp = S.campaigns.get(p.campaign); const weeks = (camp?.weeks||[]).map(w=>[String(w.n),"Неделя "+w.n]);
+  let o = `<div class="dr-top"><span class="code">${esc(p.code)}</span><span class="chip s-${esc(p.stream)}">${STREAMS[p.stream]||""}</span>
+    <span style="flex:1"></span><button class="btn ghost" data-act="close" aria-label="Закрыть">Закрыть</button></div>
+    <input class="dr-title" data-pf="title" value="${esc(p.title||"")}" placeholder="Название публикации" aria-label="Название">
+    <div class="meta">
+      <div><label class="lab" for="pDate">Дата (ET)</label><input class="in" id="pDate" type="date" data-pf="date" value="${esc(p.date||"")}"></div>
+      <div><label class="lab" for="pTime">Время ET</label><input class="in" id="pTime" type="time" data-pf="time" value="${esc(p.time||"")}"><div class="ref num">${esc(toMsk(p.date,p.time))}</div></div>
+      <div><label class="lab" for="pStream">Поток</label><select class="in" id="pStream" data-pf="stream">${opt([["N","Ночь"],["D","День"]], p.stream)}</select></div>
+      <div><label class="lab" for="pWeek">Неделя</label><select class="in" id="pWeek" data-pf="week" data-num>${opt(weeks, String(p.week))}</select></div>
+      <div><label class="lab" for="pFmt">Формат</label><select class="in" id="pFmt" data-pf="format">${opt(Object.entries(FORMATS).map(([k,v])=>[k,k+" · "+v]), p.format, "Не выбран")}</select></div>
+      <div><label class="lab" for="pKind">Тип и длина</label><div style="display:flex;gap:6px"><input class="in" id="pKind" data-pf="kind" value="${esc(p.kind||"")}" placeholder="Рилс"><input class="in" data-pf="length" value="${esc(p.length||"")}" placeholder="20 с" aria-label="Длина" style="max-width:96px"></div></div>
+      <div class="wide"><label class="lab" for="pStatus">Статус</label><div class="seg" role="group" aria-label="Статус">${STATUSES.map(([k,l])=>`<button data-act="pstatus" data-v="${k}" aria-pressed="${p.status===k}">${l}</button>`).join("")}</div></div>
+      <div class="wide"><label class="lab" for="pHook">Хук — первые 3 секунды</label><select class="in" id="pHook" data-pf="hook">${opt(hooks, p.hook, "Хука нет в базе, напишу свой")}</select>
+        ${h ? `<div class="ref"><b>“${esc(h.text)}”</b><br>В первом кадре: ${esc(h.frame)}.</div>` : `<textarea class="ta" data-pf="hookText" style="margin-top:8px;min-height:50px" placeholder="Текст хука или пометка, например «лучший хук недель 1–3»">${esc(p.hookText||"")}</textarea>`}
+        ${p.hookNote ? `<input class="in" data-pf="hookNote" value="${esc(p.hookNote)}" aria-label="Уточнение к хуку" style="margin-top:8px">` : ""}</div>
+      <div class="wide"><label class="lab" for="pTrial">Хук для Trial Reel</label><select class="in" id="pTrial" data-pf="hookTrial">${opt(hooks, p.hookTrial, "Без варианта")}</select>
+        ${ht?`<div class="ref">“${esc(ht.text)}”</div>`:""}</div>
+      <div class="wide"><label class="lab" for="pBody">Тело — основная часть</label><input class="in" id="pBody" data-pf="body" value="${esc(p.body||"")}" placeholder="B-02 + R-1">
+        ${bodyRefs.map(b => `<div class="ref"><b>${esc(b.code)} · ${esc(b.title)}.</b> ${esc(b.content)}</div>`).join("")}</div>
+      <div class="wide"><label class="lab" for="pCta">Призыв — финал и первая строка подписи</label><select class="in" id="pCta" data-pf="cta">${opt(ctas, p.cta, "Не выбран")}</select>
+        ${cta?`<div class="ref">“${esc(cta.text)}” — ${esc(cta.gives)}</div>`:""}</div>
+      <div class="wide"><label class="lab" for="pTest">Что проверяем</label><input class="in" id="pTest" data-pf="test" value="${esc(p.test||"")}"></div>
+      <div class="wide"><label class="lab" for="pIg">Ссылка на публикацию</label><input class="in" id="pIg" type="url" data-pf="igUrl" value="${esc(p.igUrl||"")}" placeholder="https://www.instagram.com/reel/…">
+        ${p.igUrl && /^https:\/\//.test(p.igUrl) ? `<div class="ref"><a href="${esc(p.igUrl)}" target="_blank" rel="noopener">Открыть в Instagram</a></div>` : ""}</div>
+    </div>
+    <div class="dtabs" role="tablist">${[["script","Сценарий"],["prompts",`Промпты${(p.prompts||[]).length?" · "+p.prompts.length:""}`],["caption","Подпись"],["media",`Медиа${(p.media||[]).length?" · "+p.media.length:""}`],["metrics","Метрики"],["talk",`Обсуждение${nc?" · "+nc:""}`]].map(([k,l])=>`<button data-act="drtab" data-v="${k}" aria-pressed="${S.drTab===k}">${l}</button>`).join("")}</div>`;
+  o += S.drTab==="prompts" ? tPrompts(p) : S.drTab==="caption" ? tCaption(p) : S.drTab==="media" ? tMedia(p) : S.drTab==="metrics" ? tMetrics(p) : S.drTab==="talk" ? tTalk(p) : tScript(p);
+  o += `<div style="margin-top:40px;display:flex;gap:8px;align-items:center" class="w">${S.confirmDel
+      ? `<span class="muted">Удалить публикацию ${esc(p.code)} насовсем?</span><button class="btn danger" data-act="delpost">Удалить</button><button class="btn ghost" data-act="canceldel">Оставить</button>`
+      : `<button class="btn ghost danger" data-act="askdel">Удалить публикацию</button>`}</div>`;
+  el.innerHTML = o;
+  el.querySelectorAll("table.sc textarea").forEach(autoH);
+  if(!S.canWrite) lockInputs(el);
+}
+function autoH(t){ t.style.height = "auto"; t.style.height = (t.scrollHeight+2) + "px"; }
+function tScript(p){
+  const cols = p.cols && p.cols.length===4 ? p.cols : REEL_COLS;
+  const rows = (p.scenes||[]);
+  let o = "";
+  if(p.trialNote || p.hookTrial) o += `<label class="lab" for="pTrialNote">Вариант для Trial Reel</label><textarea class="ta" id="pTrialNote" data-pf="trialNote" style="margin-bottom:16px;min-height:56px">${esc(p.trialNote||"")}</textarea>`;
+  o += `<div class="sc-wrap"><table class="sc"><thead><tr>${cols.map((c,i)=>`<th${i===0?' class="t"':""}><input data-col="${i}" value="${esc(c)}" aria-label="Заголовок колонки ${i+1}"></th>`).join("")}<th></th></tr></thead><tbody>
+    ${rows.map((r,ri) => `<tr>${[0,1,2,3].map(ci => `<td${ci===0?' class="t"':""}><textarea rows="1" data-cell="${ri}:${ci}" aria-label="${esc(cols[ci]||"")}, строка ${ri+1}">${esc((r.c||[])[ci]||"")}</textarea></td>`).join("")}
+      <td class="x"><button class="btn sm ghost w" data-act="delrow" data-i="${ri}" aria-label="Удалить строку ${ri+1}">×</button></td></tr>`).join("")}
+  </tbody></table></div>
+  ${rows.length?"":`<p class="muted">Сценария пока нет. Добавьте первую сцену или слайд.</p>`}
+  <div style="display:flex;gap:8px;margin-top:10px" class="w"><button class="btn sm" data-act="addrow">+ Строка</button>
+  ${rows.length?"":`<button class="btn sm ghost" data-act="cols" data-v="reel">Колонки для рилса</button><button class="btn sm ghost" data-act="cols" data-v="slides">Колонки для карусели</button>`}</div>`;
+  return o;
+}
+function tPrompts(p){
+  const ps = p.prompts || [];
+  return (ps.length ? "" : `<p class="muted">Промптов пока нет. Добавьте промпт для Higgsfield, Kling или генератора изображений. Пишите их по-английски.</p>`) +
+    ps.map((t,i) => `<div class="prompt"><label class="lab" for="pr${i}">Промпт ${i+1}</label><textarea id="pr${i}" data-prompt="${i}">${esc(t)}</textarea>
+      <div class="pa"><button class="btn sm" data-act="copyprompt" data-i="${i}">Копировать</button><button class="btn sm ghost danger w" data-act="delprompt" data-i="${i}">Удалить</button></div></div>`).join("") +
+    `<button class="btn sm w" data-act="addprompt">+ Промпт</button>`;
+}
+function tCaption(p){
+  const len = (p.caption||"").length;
+  return `<label class="lab" for="pCap">Подпись к посту (EN)</label><textarea class="ta" id="pCap" data-pf="caption" style="min-height:160px">${esc(p.caption||"")}</textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 20px"><span class="faint num" style="font-size:12.5px">${len} из 2200 знаков${/not medical advice/i.test(p.caption||"")||!p.caption?"":` · <span class="g-bad">нет строки «Educational content, not medical advice.»</span>`}</span>
+    <button class="btn sm" data-act="copycap">Копировать</button></div>
+    <label class="lab" for="pProd">Производство: что и где делать</label><textarea class="ta" id="pProd" data-pf="production" style="min-height:120px">${esc(p.production||"")}</textarea>`;
+}
+function mediaPv(m){
+  const src = m.kind === "asset" ? (window.SOMNI_BLOB_URL ? window.SOMNI_BLOB_URL(m.id) : "/_blob/" + encodeURIComponent(m.id)) : m.url;
+  if(m.kind === "asset" && /^image\//.test(m.type||"")) return `<img src="${esc(src)}" alt="${esc(m.name||"")}" loading="lazy">`;
+  if(m.kind === "asset" && /^video\//.test(m.type||"")) return `<video src="${esc(src)}" controls preload="metadata"></video>`;
+  return `<a href="${esc(src)}" target="_blank" rel="noopener">${m.kind==="link"?"Открыть ссылку":"Открыть файл"}</a>`;
+}
+function tMedia(p){
+  const ms = p.media || [];
+  return (assets ? `<div class="drop w" id="drop"><p style="margin:0 0 10px">Перетащите сюда видео, картинки или PDF, до ${window.SOMNI_MAX_MB || 20} МБ на файл.</p>
+      <label class="btn sm" for="upl">Выбрать файлы</label><input id="upl" type="file" multiple accept="image/*,video/mp4,video/webm,application/pdf" hidden></div>`
+    : `<p class="muted">Загрузка файлов доступна редакторам. Можно прикрепить ссылку на Higgsfield, облако или CapCut.</p>`) +
+    `<div class="w" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><input class="in" id="lnUrl" type="url" placeholder="https://… ссылка на файл" style="flex:2 1 220px"><input class="in" id="lnName" placeholder="Название" style="flex:1 1 140px"><button class="btn" data-act="addlink">Прикрепить ссылку</button></div>` +
+    (ms.length ? `<div class="mgrid">${ms.map((m,i) => `<div class="mitem"><div class="pv">${mediaPv(m)}</div><div class="mi"><span title="${esc(m.name||"")}">${esc(m.name||"Файл")}</span><button class="btn sm ghost w" data-act="delmedia" data-i="${i}" aria-label="Убрать ${esc(m.name||"файл")}">×</button></div></div>`).join("")}</div>` : `<p class="faint">Медиа пока нет.</p>`);
+}
+function tMetrics(p){
+  const m48 = p.m48||{}, m7 = p.m7||{};
+  const d48 = derive(m48), d7 = derive(m7); const th = thrMap();
+  const cell = (k,col,val) => `<input type="number" step="any" min="0" inputmode="decimal" data-m="${col}.${k}" value="${typeof val==="number"?val:""}" aria-label="${col==="m48"?"48 часов":"7 дней"}">`;
+  return `<p class="muted" style="margin-top:0">Через 48 часов заполните первую колонку, через 7 дней — вторую. Расчёт и цвет считаются по последним цифрам. Пороги можно поменять во вкладке «Метрики».</p>
+  <div style="overflow-x:auto"><table class="mt"><thead><tr><th>Показатель</th><th>48 ч</th><th>7 дней</th></tr></thead><tbody>
+  ${MF.map(([k,l]) => `<tr><td>${l}</td><td>${cell(k,"m48",m48[k])}</td><td>${cell(k,"m7",m7[k])}</td></tr>`).join("")}</tbody></table></div>
+  <div class="derived">${DERIVED.map(([k,l,u]) => { const dd = Object.keys(d7).some(x=>d7[x]!=null) ? d7 : d48; const v = dd[k]; const g = grade(k,v); const t = th[k];
+    return `<div class="dv"><span class="lab" style="margin:0">${l}</span><b class="${g?"g-"+g:"faint"} num">${v==null?"—":fmtN(v,k==="kwPer1000"?1:1)+u}</b>
+    <small>${t?`хорошо ${t.dir==="low"?"до":"от"} ${fmtN(t.good,1)}${u}, плохо ${t.dir==="low"?"выше":"ниже"} ${fmtN(t.bad,1)}${u}`:""}${g==="bad"&&t?`<br><span class="g-bad">Меняем: ${esc(t.fix)}</span>`:""}</small></div>`; }).join("")}</div>`;
+}
+function tTalk(p){
+  const cs = sortBy([...S.comments.values()].filter(c => c.post === p.id), c => c.at||"");
+  ensureNames(cs.map(c => c.by));
+  return `<span class="lab">Как зашло</span><div class="seg" role="group" aria-label="Оценка">${VERDICTS.map(([k,l])=>`<button data-act="verdict" data-v="${k}" aria-pressed="${p.verdict===k}">${l}</button>`).join("")}<button data-act="verdict" data-v="" aria-pressed="${!p.verdict}">Не оценено</button></div>
+    <label class="lab" for="pVn" style="margin-top:14px">Почему так</label><textarea class="ta" id="pVn" data-pf="verdictNote" placeholder="Что сработало или нет, что попробовать в следующий раз">${esc(p.verdictNote||"")}</textarea>
+    <h3 style="margin:26px 0 6px">Комментарии</h3>
+    ${cs.map(c => `<div class="comment">${avatarOf(c.by)?`<img src="${esc(avatarOf(c.by))}" alt="">`:""}<div style="flex:1;min-width:0"><div class="cm">${esc(nameOf(c.by))} · ${esc(ago(c.at))}</div><div class="ct">${esc(c.text)}</div></div>
+      ${c.by && c.by===S.me?.id?`<button class="btn sm ghost w" data-act="delcomment" data-id="${esc(c.id)}" aria-label="Удалить комментарий">×</button>`:""}</div>`).join("") || `<p class="faint">Пока никто не писал.</p>`}
+    <div class="w" style="display:grid;gap:8px;margin-top:12px"><textarea class="ta" id="newComment" data-free placeholder="Напишите комментарий для команды"></textarea><div><button class="btn pri" data-act="addcomment">Отправить</button></div></div>`;
+}
+
+/* --- strategy --- */
+function inlineMd(s){ return esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+function md(src, secId){
+  const lines = String(src||"").split("\n"); let o = "", i = 0, para = [];
+  const flush = () => { if(para.length){ o += `<p>${para.map(inlineMd).join("<br>")}</p>`; para = []; } };
+  while(i < lines.length){
+    const L = lines[i];
+    if(/^\s*\|/.test(L)){ flush(); const rows = []; while(i < lines.length && /^\s*\|/.test(lines[i])){ rows.push(lines[i].trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim())); i++; }
+      o += `<div class="tbl"><table><thead><tr>${rows[0].map(c=>`<th>${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>${rows.slice(1).map(r=>`<tr>${r.map(c=>`<td>${inlineMd(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`; continue; }
+    if(/^## /.test(L)){ flush(); o += `<h3>${inlineMd(L.slice(3))}</h3>`; i++; continue; }
+    if(/^- \[( |x)\] /i.test(L)){ flush(); o += "<ul>"; while(i < lines.length && /^- \[( |x)\] /i.test(lines[i])){ const done = /^- \[x\]/i.test(lines[i]);
+        o += `<li class="ck${done?" done":""}"><input type="checkbox" data-ck="${esc(secId)}:${i}"${done?" checked":""} aria-label="Отметить пункт"><span>${inlineMd(lines[i].slice(6))}</span></li>`; i++; } o += "</ul>"; continue; }
+    if(/^- /.test(L)){ flush(); o += "<ul>"; while(i < lines.length && /^- /.test(lines[i])){ o += `<li>${inlineMd(lines[i].slice(2))}</li>`; i++; } o += "</ul>"; continue; }
+    if(/^\d+\. /.test(L)){ flush(); o += "<ol>"; while(i < lines.length && /^\d+\. /.test(lines[i])){ o += `<li>${inlineMd(lines[i].replace(/^\d+\. /,""))}</li>`; i++; } o += "</ol>"; continue; }
+    if(!L.trim()){ flush(); i++; continue; }
+    para.push(L); i++;
+  }
+  flush(); return o;
+}
+function vStrategy(){
+  const secs = sortBy([...S.strategy.values()], s => s.order ?? 0);
+  ensureNames(secs.map(s => s.updatedBy));
+  let o = `<div class="vhead"><div><h1>Контент-стратегия</h1><p class="muted">Общая для всех кампаний. Прошлые версии разделов сохраняются.</p></div>
+    <button class="btn w" data-act="addsec">+ Раздел</button></div>
+    <div class="strat"><nav class="toc" aria-label="Разделы стратегии">${secs.map(s => `<a href="#strategy" data-act="toc" data-id="${esc(s.id)}">${esc(s.title)}</a>`).join("")}<a href="#strategy" data-act="toc" data-id="thr">Пороги метрик</a></nav><div>`;
+  for(const s of secs){
+    const editing = S.editSec === s.id;
+    o += `<section class="sec" id="sec-${esc(s.id)}"><div class="sec-h">${editing ? `<input class="in" id="secTitle" value="${esc(s.title)}" aria-label="Название раздела" style="font:700 20px var(--f-display)">` : `<h2>${esc(s.title)}</h2>`}
+      ${editing ? "" : `<button class="btn sm ghost w" data-act="editsec" data-id="${esc(s.id)}">Изменить</button>`}</div>`;
+    if(editing){
+      o += `<textarea class="ta" id="secBody" style="min-height:${Math.min(700, 120 + (s.body||"").split("\n").length*22)}px;font-size:14px">${esc(s.body||"")}</textarea>
+        <p class="faint" style="font-size:12.5px;margin:6px 0">Разметка: «## » — подзаголовок, «- » — список, «- [ ] » — пункт с галочкой, строки через «|» — таблица, **жирный**.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="savesec" data-id="${esc(s.id)}">Сохранить</button><button class="btn ghost" data-act="cancelsec">Отмена</button>
+        <span style="flex:1"></span><button class="btn ghost danger" data-act="delsec" data-id="${esc(s.id)}">Удалить раздел</button></div>`;
+    } else {
+      o += `<div class="md">${md(s.body, s.id)}</div>`;
+    }
+    const hist = s.history || [];
+    o += `<div class="sec-foot"><span>Обновлено ${esc(ago(s.updatedAt))}${s.updatedBy?`, ${esc(nameOf(s.updatedBy))}`:""}</span>
+      ${hist.length ? `<details class="hist"><summary>Прошлые версии · ${hist.length}</summary>${hist.slice().reverse().map((h,ri) => { const idx = hist.length-1-ri;
+        return `<div class="hv"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>${esc(ago(h.at))}${h.by?`, ${esc(nameOf(h.by))}`:""}</span><button class="btn sm w" data-act="restoresec" data-id="${esc(s.id)}" data-i="${idx}">Вернуть эту версию</button></div><pre>${esc(h.body)}</pre></div>`; }).join("")}</details>` : ""}</div></section>`;
+    ensureNames(hist.map(h=>h.by));
+  }
+  o += `<section class="sec" id="sec-thr"><div class="sec-h"><h2>Пороги метрик</h2><a class="btn sm ghost" href="#metrics">Изменить в «Метриках»</a></div>
+    <div class="tbl"><table><thead><tr><th>Метрика</th><th>Хорошо</th><th>Плохо</th><th>Что меняем при плохом</th></tr></thead><tbody>
+    ${(S.thr?.items||[]).map(t => `<tr><td>${esc(t.label)}</td><td class="num">${t.dir==="low"?"до":"от"} ${fmtN(t.good,1)}</td><td class="num">${t.dir==="low"?"выше":"ниже"} ${fmtN(t.bad,1)}</td><td>${esc(t.fix)}</td></tr>`).join("")}
+    </tbody></table></div><p class="faint" style="font-size:13px">Ориентиры из задачи SOM-62: техники в нише сна дают 1,6–2,1% сохранений. После первой недели пороги пересчитываем по нашей медиане.</p></section></div></div>`;
+  return o;
+}
+
+/* --- hooks --- */
+function vHooks(){
+  const posts = [...S.posts.values()];
+  let hooks = [...S.hooks.values()];
+  const cnt = k => hooks.filter(h => (h.status||"test") === k).length;
+  if(S.hookFilter !== "all") hooks = hooks.filter(h => (h.status||"test") === S.hookFilter);
+  const perf = h => aggregate(posts.filter(p => p.hook === h.code));
+  let o = `<div class="vhead"><div><h1>Хуки</h1><p class="muted">Хук — первые 3 секунды ролика. Цифры берутся из публикаций, где он стоит.</p></div>
+    <button class="btn pri w" data-act="addhook">+ Хук</button></div>
+    <div class="toolbar"><div class="seg" role="group" aria-label="Статус">${[["all",`Все · ${S.hooks.size}`],...HOOK_STATUS.map(([k,l])=>[k,`${l} · ${cnt(k)}`])].map(([k,l])=>`<button data-act="hfilter" data-v="${k}" aria-pressed="${S.hookFilter===k}">${l}</button>`).join("")}</div>
+    <span class="sp"></span><label class="faint" for="hSort" style="font-size:13px">Порядок</label><select class="sel" id="hSort" data-free>${opt([["code","По группам"],["skip","Меньше пропусков"],["save","Больше сохранений"]], S.hookSort)}</select></div>`;
+  const row = h => { const used = posts.filter(p => p.hook === h.code); const editing = S.editLib === "hooks:"+h.code;
+    return `<div class="lib-row"><div class="code">${esc(h.code)}</div>
+      <div style="min-width:0"><div class="lt">${esc(h.text)}</div>${h.frame?`<div class="ls">В первом кадре: ${esc(h.frame)}.</div>`:""}${h.note?`<div class="ls">${esc(h.note)}</div>`:""}</div>
+      <div class="lc" style="display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start"><span class="chip s-${esc(h.stream)}">${STREAMS[h.stream]||""}</span><span class="chip ${HS_CLASS[h.status||"test"]}">${HOOK_STATUS_L[h.status||"test"]}</span></div>
+      <div class="perf">${perfLine(used)}<span><button class="btn sm ghost w" data-act="editlib" data-id="hooks:${esc(h.code)}" style="margin-left:-10px">${editing?"Свернуть":"Изменить"}</button></span></div>
+      ${editing ? `<div class="editbox">
+        <div class="full"><label class="lab" for="eT">Текст на экране</label><textarea class="ta" id="eT" data-lib="hooks|${esc(h.code)}|text" style="min-height:50px">${esc(h.text)}</textarea></div>
+        <div class="full"><label class="lab" for="eF">Первый кадр</label><input class="in" id="eF" data-lib="hooks|${esc(h.code)}|frame" value="${esc(h.frame||"")}"></div>
+        <div><label class="lab" for="eG">Группа</label><select class="in" id="eG" data-lib="hooks|${esc(h.code)}|group">${opt(Object.entries(HOOK_GROUPS).map(([k,v])=>[k,k+" · "+v]), h.group)}</select></div>
+        <div><label class="lab" for="eS">Поток</label><select class="in" id="eS" data-lib="hooks|${esc(h.code)}|stream">${opt(Object.entries(STREAMS), h.stream)}</select></div>
+        <div><label class="lab" for="eSt">Статус</label><select class="in" id="eSt" data-lib="hooks|${esc(h.code)}|status">${opt(HOOK_STATUS, h.status||"test")}</select></div>
+        <div><label class="lab" for="eSrc">Откуда</label><input class="in" id="eSrc" data-lib="hooks|${esc(h.code)}|source" value="${esc(h.source||"")}"></div>
+        <div class="full"><label class="lab" for="eN">Заметка команды</label><textarea class="ta" id="eN" data-lib="hooks|${esc(h.code)}|note" style="min-height:50px" placeholder="Почему работает или нет">${esc(h.note||"")}</textarea></div>
+      </div>` : ""}</div>`; };
+  if(S.hookSort === "code"){
+    for(const [g, gl] of Object.entries(HOOK_GROUPS)){
+      const gh = sortBy(hooks.filter(h => h.group === g), h => h.code); if(!gh.length) continue;
+      o += `<div class="grp-h"><h2>${g}. ${esc(gl)}</h2><span class="faint">${gh.length}</span></div>${gh.map(row).join("")}`;
+    }
+    const other = hooks.filter(h => !HOOK_GROUPS[h.group]); if(other.length) o += `<div class="grp-h"><h2>Без группы</h2></div>${other.map(row).join("")}`;
+  } else {
+    const key = S.hookSort === "skip" ? (h => { const a = perf(h); return a.skip ?? 999; }) : (h => { const a = perf(h); return -(a.saveShare ?? -1); });
+    o += `<div style="margin-top:16px">${sortBy(hooks, key).map(row).join("")}</div>`;
+  }
+  return o;
+}
+
+/* --- library --- */
+function vLibrary(){
+  const posts = [...S.posts.values()];
+  const tabs = [["night","Ночные тела"],["day","Дневные тела"],["rtb","Строки доверия"],["cta","Призывы"]];
+  let o = `<div class="vhead"><div><h1>Тела и призывы</h1><p class="muted">Тело идёт после хука, призыв завершает ролик.</p></div>
+    <button class="btn pri w" data-act="addlibitem">+ ${S.libTab==="cta"?"Призыв":S.libTab==="rtb"?"Строка доверия":"Тело"}</button></div>
+    <div class="toolbar"><div class="seg" role="group" aria-label="Библиотека">${tabs.map(([k,l])=>`<button data-act="libtab" data-v="${k}" aria-pressed="${S.libTab===k}">${l}</button>`).join("")}</div></div><div style="margin-top:14px">`;
+  if(S.libTab === "cta"){
+    o += sortBy([...S.ctas.values()], c=>c.code).map(c => { const used = posts.filter(p => p.cta === c.code); const ed = S.editLib === "ctas:"+c.code;
+      return `<div class="lib-row"><div class="code">${esc(c.code)}</div><div style="min-width:0"><div class="lt">${esc(c.text)}</div>${c.gives?`<div class="ls">Зрительница получает: ${esc(c.gives.charAt(0).toLowerCase()+c.gives.slice(1))}.</div>`:""}${c.note?`<div class="ls">${esc(c.note)}</div>`:""}</div>
+        <div class="lc"><span class="chip s-${esc(c.stream)}">${STREAMS[c.stream]||""}</span></div>
+        <div class="perf">${perfLine(used)}<span><button class="btn sm ghost w" data-act="editlib" data-id="ctas:${esc(c.code)}" style="margin-left:-10px">${ed?"Свернуть":"Изменить"}</button></span></div>
+        ${ed ? `<div class="editbox"><div class="full"><label class="lab" for="cT">Текст (EN)</label><textarea class="ta" id="cT" data-lib="ctas|${esc(c.code)}|text" style="min-height:50px">${esc(c.text)}</textarea></div>
+          <div><label class="lab" for="cG">Что получает зрительница</label><input class="in" id="cG" data-lib="ctas|${esc(c.code)}|gives" value="${esc(c.gives||"")}"></div>
+          <div><label class="lab" for="cM">Метрика</label><input class="in" id="cM" data-lib="ctas|${esc(c.code)}|metric" value="${esc(c.metric||"")}"></div>
+          <div><label class="lab" for="cS">Поток</label><select class="in" id="cS" data-lib="ctas|${esc(c.code)}|stream">${opt(Object.entries(STREAMS), c.stream)}</select></div>
+          <div class="full"><label class="lab" for="cN">Заметка</label><textarea class="ta" id="cN" data-lib="ctas|${esc(c.code)}|note" style="min-height:50px">${esc(c.note||"")}</textarea></div></div>` : ""}</div>`; }).join("");
+  } else {
+    const items = sortBy([...S.bodies.values()].filter(b => b.kind === S.libTab), b => b.code);
+    o += items.map(b => { const used = posts.filter(p => codesIn(p.body, BODY_RE).includes(b.code)); const ed = S.editLib === "bodies:"+b.code;
+      const steps = (b.content||"").split(" / ");
+      return `<div class="lib-row"><div class="code">${esc(b.code)}</div><div style="min-width:0"><div class="lt">${esc(b.title)}</div>
+        <div class="ls">${b.kind==="night" ? steps.map(esc).join(" → ") : esc(b.content)}</div>
+        ${b.note?`<div class="ls">${esc(b.note)}</div>`:""}</div>
+        <div class="lc faint" style="font-size:13px">${esc(b.length||"")}</div>
+        <div class="perf">${perfLine(used)}<span><button class="btn sm ghost w" data-act="editlib" data-id="bodies:${esc(b.code)}" style="margin-left:-10px">${ed?"Свернуть":"Изменить"}</button></span></div>
+        ${ed ? `<div class="editbox"><div><label class="lab" for="bT">Название</label><input class="in" id="bT" data-lib="bodies|${esc(b.code)}|title" value="${esc(b.title||"")}"></div>
+          <div><label class="lab" for="bL">Длина</label><input class="in" id="bL" data-lib="bodies|${esc(b.code)}|length" value="${esc(b.length||"")}"></div>
+          <div><label class="lab" for="bF">Форматы</label><input class="in" id="bF" data-lib="bodies|${esc(b.code)}|formats" value="${esc(b.formats||"")}"></div>
+          <div class="full"><label class="lab" for="bC">${b.kind==="night"?"Шаги на экране (EN), через « / »":"Что внутри (EN)"}</label><textarea class="ta" id="bC" data-lib="bodies|${esc(b.code)}|content">${esc(b.content||"")}</textarea></div>
+          ${b.kind==="night"?`<div class="full"><label class="lab" for="bW">Почему работает (EN)</label><textarea class="ta" id="bW" data-lib="bodies|${esc(b.code)}|why" style="min-height:50px">${esc(b.why||"")}</textarea></div>`:""}
+          ${b.kind==="day"?`<div><label class="lab" for="bR">RTB</label><input class="in" id="bR" data-lib="bodies|${esc(b.code)}|rtb" value="${esc(b.rtb||"")}"></div><div><label class="lab" for="bS">Экраны</label><input class="in" id="bS" data-lib="bodies|${esc(b.code)}|screens" value="${esc(b.screens||"")}"></div>`:""}
+          <div class="full"><label class="lab" for="bN">Заметка</label><textarea class="ta" id="bN" data-lib="bodies|${esc(b.code)}|note" style="min-height:50px">${esc(b.note||"")}</textarea></div></div>` : ""}</div>`; }).join("") || `<p class="muted">Здесь пока пусто.</p>`;
+  }
+  return o + "</div>";
+}
+
+/* --- ideas --- */
+function vIdeas(){
+  let ideas = sortBy([...S.ideas.values()], i => i.at || "").reverse();
+  ensureNames(ideas.map(i => i.by));
+  const cnt = k => [...S.ideas.values()].filter(i => (i.status||"new") === k).length;
+  if(S.ideaFilter !== "all") ideas = ideas.filter(i => (i.status||"new") === S.ideaFilter);
+  const camps = sortBy([...S.campaigns.values()], c=>c.start||"");
+  let o = `<div class="vhead"><div><h1>Идеи</h1><p class="muted">Сюда можно добавлять хуки, темы и ролики конкурентов. Хорошую идею можно сразу перенести в план.</p></div></div>
+    <div class="composer w"><label class="lab" for="ideaText" style="margin:0">Новая идея</label><textarea class="ta" id="ideaText" data-free placeholder="Например: хук «My 3 a.m. brain has a podcast» и ссылка на похожий ролик"></textarea>
+    <div class="cr"><select class="sel" id="ideaKind" data-free aria-label="Тип идеи">${IDEA_KINDS.map(k=>`<option>${k}</option>`).join("")}</select>
+      <select class="sel" id="ideaStream" data-free aria-label="Поток">${opt(Object.entries(STREAMS), "ND")}</select>
+      <span style="flex:1"></span><button class="btn pri" data-act="addidea">Добавить идею</button></div></div>
+    <div class="toolbar" style="margin-top:22px"><div class="seg" role="group" aria-label="Статус идей">${[["all",`Все · ${S.ideas.size}`],...IDEA_STATUS.map(([k,l])=>[k,`${l} · ${cnt(k)}`])].map(([k,l])=>`<button data-act="ifilter" data-v="${k}" aria-pressed="${S.ideaFilter===k}">${l}</button>`).join("")}</div></div>`;
+  o += ideas.map(i => { const st = i.status || "new"; const planning = S.ideaPlan === i.id;
+    const c = curCamp(); const weeks = (c?.weeks||[]);
+    return `<div class="idea"><div style="min-width:0"><div class="it">${esc(i.text)}</div>
+      <div class="im"><span class="chip ${IDEA_CLASS[st]}">${IDEA_L[st]}</span><span>${esc(i.kind||"Идея")} для потока «${STREAMS[i.stream||"ND"]}». Добавил(а) ${esc(nameOf(i.by))}, ${esc(ago(i.at))}.</span>
+      ${i.post && S.posts.get(i.post) ? `<a href="#post-${esc(i.post)}">Открыть ${esc(S.posts.get(i.post).code)}</a>` : ""}</div>
+      ${planning ? `<div class="cr" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center"><span class="muted">В какую неделю «${esc(c?.name||"")}»?</span>${weeks.map(w=>`<button class="btn sm" data-act="ideatoplan" data-id="${esc(i.id)}" data-week="${w.n}">Неделя ${w.n}</button>`).join("")}<button class="btn sm ghost" data-act="ideaplancancel">Отмена</button></div>` : ""}</div>
+      <div class="ia w"><select class="sel" data-idea="${esc(i.id)}" aria-label="Статус идеи" style="padding-block:5px;font-size:13px">${opt(IDEA_STATUS, st)}</select>
+        ${!i.post ? `<button class="btn sm" data-act="ideaplan" data-id="${esc(i.id)}">В план</button>` : ""}
+        ${(i.by && i.by===S.me?.id) || S.isOwner ? `<button class="btn sm ghost danger" data-act="delidea" data-id="${esc(i.id)}" aria-label="Удалить идею">×</button>` : ""}</div></div>`; }).join("") || `<p class="muted" style="margin-top:12px">${S.ideas.size ? "Нет идей с таким статусом." : "Идей пока нет. Добавьте первую выше."}</p>`;
+  return o;
+}
+
+/* --- metrics --- */
+function vMetrics(){
+  const all = [...S.posts.values()];
+  const scope = S.metricsScope === "all" ? all : all.filter(p => p.campaign === S.campaign);
+  const withM = scope.filter(hasM);
+  const A = aggregate(scope); const th = thrMap();
+  const tile = (label, val, key, unit, dec) => { const g = key ? grade(key, val) : ""; return `<div class="tile"><small>${label}</small><b class="num ${g?"g-"+g:""}">${val==null?"—":fmtN(val,dec)+unit}</b>${key&&th[key]?`<small>цель ${th[key].dir==="low"?"до":"от"} ${fmtN(th[key].good,1)}${unit}</small>`:""}</div>`; };
+  let o = `<div class="vhead"><div><h1>Метрики</h1><p class="muted">Цифры берутся из карточек публикаций. Цвет показывает, хорошо это или плохо.</p></div>
+    <div class="seg" role="group" aria-label="Период">${[["camp","Текущая кампания"],["all","Все кампании"]].map(([k,l])=>`<button data-act="mscope" data-v="${k}" aria-pressed="${S.metricsScope===k}">${l}</button>`).join("")}</div></div>
+    <div class="tiles">${tile("Публикаций с цифрами", withM.length, null, "", 0).replace("</b>", `</b><small>из ${scope.length}</small>`)}
+      ${tile("Медиана просмотров", A.views, null, "", 0)}${tile("Пропуски в первые 3 с", A.skip, "skip", "%", 0)}${tile("Сохранения + пересылки", A.saveShare, "saveShare", "%", 1)}${tile("Переходы в профиль от охвата", A.profileRate, "profileRate", "%", 1)}${tile("Кодовые слова на 1000", A.kwPer1000, "kwPer1000", "", 1)}</div>`;
+  if(!withM.length){
+    o += `<div class="note" style="margin-top:22px"><b>Цифр пока нет.</b> Через 48 часов после публикации откройте её в плане, вкладка «Метрики», и внесите просмотры, пропуски, сохранения и переходы. Здесь сразу появятся сравнение потоков, форматов и рейтинг хуков.</div>`;
+  } else {
+    const N = aggregate(scope.filter(p=>p.stream==="N")), D = aggregate(scope.filter(p=>p.stream==="D"));
+    const rows = [["views","Медиана просмотров","",0],["skip","Пропуски, меньше лучше","%",0],["saveShare","Сохранения + пересылки","%",1],["profileRate","Переходы в профиль","%",1],["commentRate","Комментарии","%",2],["kwPer1000","Кодовые слова на 1000","",1],["followPer1000","Подписки на 1000","",1]];
+    o += `<section class="panel"><h2>Ночь против Дня</h2><p class="muted" style="margin:-4px 0 14px">Гипотеза недели 1: ночной поток даёт больше сохранений, дневной — больше переходов в профиль.</p><div class="cmp">
+      ${rows.map(([k,l,u,dec]) => { const a = N[k], b = D[k]; const mx = Math.max(a||0,b||0) || 1;
+        return `<div class="cmp-row"><div class="cl"><span>${l}</span></div><div class="cmp-bars">
+          <div><span>Ночь</span><i style="width:${(a||0)/mx*70}%;background:var(--night)"></i><b class="num">${a==null?"—":fmtN(a,dec)+u}</b></div>
+          <div><span>День</span><i style="width:${(b||0)/mx*70}%;background:var(--amber)"></i><b class="num">${b==null?"—":fmtN(b,dec)+u}</b></div></div></div>`; }).join("")}</div></section>`;
+    const fm = Object.keys(FORMATS).map(f => [f, aggregate(scope.filter(p => p.format === f))]).filter(([,a]) => a.n);
+    o += `<section class="panel"><h2>Форматы</h2><div style="overflow-x:auto"><table class="data"><thead><tr><th>Формат</th><th>С цифрами</th><th>Просмотры</th><th>Пропуски</th><th>Сохр. + перес.</th><th>Профиль</th></tr></thead><tbody>
+      ${fm.map(([f,a]) => `<tr><td>${f} · ${FORMATS[f]}</td><td>${a.n}</td><td>${fmtN(a.views)}</td><td class="g-${grade("skip",a.skip)}">${a.skip==null?"—":fmtN(a.skip)+"%"}</td><td class="g-${grade("saveShare",a.saveShare)}">${a.saveShare==null?"—":fmtN(a.saveShare,1)+"%"}</td><td class="g-${grade("profileRate",a.profileRate)}">${a.profileRate==null?"—":fmtN(a.profileRate,1)+"%"}</td></tr>`).join("")}</tbody></table></div></section>`;
+    const hk = [...new Set(scope.map(p=>p.hook).filter(Boolean))].map(c => [c, aggregate(scope.filter(p=>p.hook===c))]).filter(([,a])=>a.n && a.skip!=null);
+    sortBy(hk, ([,a]) => a.skip);
+    const hrow = ([c,a]) => `<tr><td><span class="code">${esc(c)}</span> ${esc((S.hooks.get(c)?.text||"").slice(0,80))}</td><td class="g-${grade("skip",a.skip)}">${fmtN(a.skip)}%</td><td class="g-${grade("saveShare",a.saveShare)}">${a.saveShare==null?"—":fmtN(a.saveShare,1)+"%"}</td><td>${fmtN(a.views)}</td></tr>`;
+    o += `<section class="panel"><h2>Хуки по удержанию</h2><div style="overflow-x:auto"><table class="data"><thead><tr><th>Хук</th><th>Пропуски</th><th>Сохр. + перес.</th><th>Просмотры</th></tr></thead><tbody>${hk.map(hrow).join("") || `<tr><td colspan="4" class="faint">Внесите долю пропусков, чтобы сравнить хуки.</td></tr>`}</tbody></table></div></section>`;
+    const camps = S.metricsScope==="all" ? sortBy([...S.campaigns.values()], c=>c.start||"") : [curCamp()].filter(Boolean);
+    o += `<section class="panel"><h2>${S.metricsScope==="all"?"Кампании и недели":"По неделям"}</h2><div style="overflow-x:auto"><table class="data"><thead><tr><th>Период</th><th>С цифрами</th><th>Просмотры</th><th>Пропуски</th><th>Сохр. + перес.</th><th>Профиль</th><th>Залетело</th></tr></thead><tbody>`;
+    for(const c of camps){ for(const w of (c.weeks||[])){ const ps = all.filter(p=>p.campaign===c.id && p.week===w.n); const a = aggregate(ps);
+      o += `<tr><td>${S.metricsScope==="all"?esc(c.name)+", ":""}неделя ${w.n}</td><td>${a.n} из ${ps.length}</td><td>${fmtN(a.views)}</td><td class="g-${grade("skip",a.skip)}">${a.skip==null?"—":fmtN(a.skip)+"%"}</td><td class="g-${grade("saveShare",a.saveShare)}">${a.saveShare==null?"—":fmtN(a.saveShare,1)+"%"}</td><td class="g-${grade("profileRate",a.profileRate)}">${a.profileRate==null?"—":fmtN(a.profileRate,1)+"%"}</td><td>${ps.filter(p=>p.verdict==="hit").length}</td></tr>`; } }
+    o += `</tbody></table></div></section>`;
+  }
+  o += `<section class="panel"><h2>Пороги</h2><p class="muted" style="margin:-4px 0 12px">После первой недели пересчитайте по своей медиане. Изменения сразу видны всей команде.</p><div style="overflow-x:auto"><table class="data"><thead><tr><th>Метрика</th><th>Хорошо</th><th>Плохо</th><th>Что меняем при плохом</th></tr></thead><tbody>
+    ${(S.thr?.items||[]).map((t,i) => `<tr><td>${esc(t.label)}</td><td>${t.dir==="low"?"до":"от"} <input type="number" step="any" data-thr="${i}:good" value="${esc(t.good)}" aria-label="Хорошо: ${esc(t.label)}"></td><td>${t.dir==="low"?"выше":"ниже"} <input type="number" step="any" data-thr="${i}:bad" value="${esc(t.bad)}" aria-label="Плохо: ${esc(t.label)}"></td><td>${esc(t.fix)}</td></tr>`).join("")}</tbody></table></div></section>
+    <section class="panel"><div class="note"><b>Instagram пока не подключён.</b> Сейчас цифры вносятся вручную в карточке публикации. Следующий шаг — подтягивать просмотры, охват, сохранения и пересылки из Instagram автоматически по ссылке на публикацию. Для этого нужен профессиональный аккаунт Somni и доступ к его статистике.</div></section>`;
+  return o;
+}
+
+
+/* --- legend --- */
+function vLegend(){
+  const dl = rows => `<div class="lg">${rows.map(([t,d]) => `<div class="lg-t">${t}</div><div class="lg-d">${d}</div>`).join("")}</div>`;
+  const hk = c => esc(S.hooks.get(c)?.text || "");
+  return `<div class="vhead"><div><h1>Легенда</h1><p class="muted">Что значат буквы, цифры, цвета и статусы на сайте.</p></div></div>
+  <div class="legend">
+  <section class="lg-sec"><h2>Из чего собрана публикация</h2>
+    <p>Каждый ролик и каждая карусель собираются из трёх частей. Мы меняем одну часть за раз и по цифрам видим, какая сработала.</p>
+    ${dl([
+      ["Хук", "Первые 3 секунды. Его задача — остановить ленту. Это текст на экране и первый кадр."],
+      ["Тело", "Основная часть после хука. Ночью это один метод по шагам, днём — рассказ о том, что даёт Somni."],
+      ["Призыв", "Последние 2–3 секунды и первая строка подписи. Говорит, что сделать дальше: сохранить, написать слово в комментариях, перейти по ссылке."],
+    ])}</section>
+
+  <section class="lg-sec"><h2>Коды</h2>
+    <p>У каждой части есть код, чтобы быстро собирать и сравнивать связки.</p>
+    ${dl([
+      [`<span class="code">1-03</span>`, "Номер публикации. Первая цифра — неделя, вторая — порядковый номер в неделе. 1-03 — третья публикация первой недели."],
+      [`<span class="code">H-08</span>`, `Хук. Все хуки лежат во вкладке «Хуки». Например, H-08 — «${hk("H-08")}».`],
+      [`<span class="code">B-02</span>`, "Тело. Коды с B-01 по B-18 — ночные методы, с B-20 по B-29 — дневные темы про приложение. Например, B-02 — дыхание Relief Sigh."],
+      [`<span class="code">R-1</span>`, "Строка доверия в самом конце ночного ролика. Одна фраза о том, почему Somni можно верить. Запись «B-02 + R-1» значит, что после тела B-02 идёт строка R-1."],
+      [`<span class="code">C-01</span>`, "Призыв. Например, C-01 — «Save this for the next 3 a.m.»"],
+      [`<span class="code">F1–F6</span>`, "Формат ролика. Расшифровка ниже."],
+    ])}</section>
+
+  <section class="lg-sec"><h2>Группы хуков</h2>
+    <p>Хуки разбиты на группы по приёму. Буква группы стоит перед её названием во вкладке «Хуки».</p>
+    ${dl([
+      ["A", "Узнавание. Точная ночная сцена, в которой зрительница узнаёт себя: часы, подсчёт оставшегося сна, прокручивание разговора."],
+      ["B", "Метод прямо сейчас. Предлагаем сделать что-то вместе с роликом."],
+      ["C", "Наука и имена. В первой фразе исследование или автор метода."],
+      ["D", "Юмор и жизнь после 40. Шутки про перименопаузу, мужа и возраст."],
+      ["E", "Миф и неожиданный факт. Ломаем привычное представление о сне."],
+      ["F", "Списки. «3 вещи», «5 правил» — то, что хочется сохранить."],
+      ["G", "Стоп-кадр вне темы. Первая секунда не про сон, чтобы остановить ленту, дальше обычный ролик."],
+      ["H", "Приложение в кадре. Показываем Somni с первой секунды."],
+    ])}</section>
+
+  <section class="lg-sec"><h2>Форматы</h2>
+    ${dl(Object.entries({
+      F1:"Ночной POV. Кадр из кровати в темноте, янтарные титры, тихий голос ведёт по методу.",
+      F2:"Метод с Lumi. Тёмный фон, овечка Lumi дышит в ритм, на экране счёт. Можно повторять прямо во время просмотра.",
+      F3:"Говорящая голова. Женщина 45–55 лет говорит в камеру. Сюда же относятся скетчи.",
+      F4:"Экран приложения. Показываем, как Somni работает, голос объясняет за кадром.",
+      F5:"Стоп-кадр вне темы. Первые 1–2 секунды — неожиданная сцена, сделанная в Higgsfield.",
+      F6:"Карусель. От 6 до 9 слайдов в стиле Somni.",
+    }).map(([k,v]) => [`<span class="code">${k}</span>`, v]))}</section>
+
+  <section class="lg-sec"><h2>Потоки и время</h2>
+    ${dl([
+      [`<span class="chip s-N">Ночь</span>`, "Ролики для той, кто проснулась ночью и листает ленту. Короткие, тёмные и тихие, внутри один метод. Выходят в 23:30 по Нью-Йорку."],
+      [`<span class="chip s-D">День</span>`, "Ролики для той, кто смотрит днём или вечером. Объясняют, что даёт Somni, чтобы приложение поставили заранее. Выходят в 12:00 или 19:00 по Нью-Йорку."],
+      [`<span class="chip s-ND">Оба</span>`, "Так отмечены хуки и призывы, которые подходят для обоих потоков."],
+      ["Время", "Аудитория в США, поэтому время публикации указано по Нью-Йорку (ET). Под ним стоит московское время. В ноябре разница 8 часов: 23:30 по Нью-Йорку — это 07:30 по Москве следующего дня."],
+    ])}</section>
+
+  <section class="lg-sec"><h2>Статусы публикации</h2>
+    ${dl(STATUSES.map(([k,l]) => [`<span class="chip st-${k}">${l}</span>`, {
+      plan:"Публикация стоит в календаре, сценария ещё нет.",
+      script:"Сцены, текст, подпись и промпты готовы. Можно генерировать и снимать.",
+      prod:"Идёт производство: генерируем, снимаем, монтируем.",
+      ready:"Ролик собран и стоит в отложенном постинге.",
+      live:"Публикация вышла в Instagram. Через 48 часов вносим первые цифры.",
+    }[k]]))}</section>
+
+  <section class="lg-sec"><h2>Оценка после выхода</h2>
+    <p>Через 7 дней команда смотрит на цифры и ставит оценку в карточке, во вкладке «Обсуждение». Рядом пишем, почему так вышло.</p>
+    ${dl(VERDICTS.map(([k,l]) => [`<span class="chip v-${k}">${l}</span>`, {
+      hit:"Цифры заметно выше обычного. Связку повторяем с новым телом или хуком.",
+      ok:"Ролик отработал в пределах нормы.",
+      miss:"Цифры ниже порогов. Разбираем, какая часть не сработала, и меняем её.",
+    }[k]]))}</section>
+
+  <section class="lg-sec"><h2>Статусы хуков</h2>
+    ${dl(HOOK_STATUS.map(([k,l]) => [`<span class="chip ${HS_CLASS[k]}">${l}</span>`, {
+      test:"Хук ещё проверяем или пока не использовали.",
+      works:"Хук стабильно удерживает. Ставим его с новыми телами.",
+      weak:"Хук теряет зрителей в первые секунды. Без доработки не используем.",
+      arch:"Хук больше не нужен, но остаётся в базе для истории.",
+    }[k]]))}</section>
+
+  <section class="lg-sec"><h2>Метрики и цвета</h2>
+    <p>Цифры вносим в карточке публикации дважды: через 48 часов и через 7 дней. Сайт сам считает доли и красит их по порогам. Пороги можно поменять во вкладке «Метрики».</p>
+    ${dl([
+      [`<span class="g-good">Зелёный</span>`, "Показатель хороший."],
+      [`<span class="g-mid">Жёлтый</span>`, "Показатель между хорошим и плохим порогом."],
+      [`<span class="g-bad">Красный</span>`, "Показатель плохой. В карточке появится подсказка, какую часть ролика менять."],
+    ])}</section>
+
+  <section class="lg-sec"><h2>Другие слова на сайте</h2>
+    ${dl([
+      ["Trial Reel", "Вариант ролика с другим хуком. Instagram показывает его только тем, кто не подписан на аккаунт. Так мы сравниваем хуки, а в основную ленту уходит лучший вариант."],
+      ["RTB", "Причина верить Somni: банк методов, исследования, имена авторов, игра в приложении."],
+      ["NIGHT, SLEEP, RESET", "Кодовые слова. Если зрительница пишет такое слово в комментариях, ManyChat присылает ей в директ материал: обои с методами, квиз или план на неделю."],
+      ["N1, E1, M1, T1, C1, X1", "Коды экранов из макетов приложения. N — ночной режим, E — вечерний ритуал, M — утренний чек-ин, T — остров и игра, C — коуч Lumi, X — дневные подсказки."],
+      ["Lumi", "Овечка, персонаж Somni и голос ночных практик."],
+    ])}</section>
+  </div>`;
+}
+
+/* --- history --- */
+function vHistory(){
+  const items = S.log; ensureNames(items.map(l => l.by));
+  let o = `<div class="vhead"><div><h1>История</h1><p class="muted">Кто и что менял на сайте.</p></div></div>`;
+  let day = "";
+  for(const l of items){ const d = new Date(l.at); const dk = d.getDate()+" "+MONTHS[d.getMonth()];
+    if(dk !== day){ day = dk; o += `<div class="day-h">${esc(dk)}</div>`; }
+    o += `<div class="log">${avatarOf(l.by)?`<img src="${esc(avatarOf(l.by))}" alt="">`:""}<div class="lt"><b>${esc(nameOf(l.by))}</b> ${esc(l.text)}${l.ref && S.posts.get(l.ref) ? ` · <a href="#post-${esc(l.ref)}">открыть</a>` : ""}</div><time>${pad(d.getHours())}:${pad(d.getMinutes())}</time></div>`; }
+  if(!items.length) o += `<p class="muted">Изменений пока нет. Как только кто-то поправит план, стратегию или хук, запись появится здесь.</p>`;
+  return o;
+}
+
+/* ---------- actions ---------- */
+function curPost(){ return S.posts.get(S.openPost); }
+function postPath(id){ return "posts/" + id; }
+function nextPostCode(campaignId, week){
+  const nums = [...S.posts.values()].filter(p => p.campaign===campaignId && p.week===week).map(p => parseInt(String(p.code).split("-")[1]||"0",10)).filter(n=>!isNaN(n));
+  return week + "-" + pad((nums.length ? Math.max(...nums) : 0) + 1);
+}
+function weekStart(c, n){ if(!c?.start) return ""; const d = parseD(c.start); d.setUTCDate(d.getUTCDate() + (n-1)*7); return d.toISOString().slice(0,10); }
+async function createPost(week, extra){
+  const c = curCamp(); if(!c) return;
+  const code = nextPostCode(c.id, week); let id = c.id === "nov-2026" ? code : (c.id + "-w" + code);
+  if(S.posts.has(id)) id = id + "-" + Date.now().toString(36);
+  const data = Object.assign({ code, campaign:c.id, week, order: 999, date: weekStart(c, week), time:"23:30", stream:"N", format:"", kind:"Рилс", title:"Новая публикация", length:"",
+    hook:"", hookText:"", hookNote:"", hookTrial:"", trialNote:"", body:"", cta:"", test:"", status:"plan", verdict:"", verdictNote:"",
+    cols: REEL_COLS, scenes:[], caption:"", production:"", prompts:[], media:[], igUrl:"", m48:{}, m7:{}, updatedAt: nowIso(), createdBy: S.me?.id||null }, extra||{});
+  await setDoc(postPath(id), data); logIt(`добавил(а) публикацию ${code}`, id);
+  location.hash = "#post-" + id;
+}
+function savePostField(f, val){
+  const p = curPost(); if(!p) return;
+  if((p[f] ?? "") === val) return;
+  upd(postPath(p.id), {[f]: val});
+  const L = {title:"название",date:"дату",time:"время",stream:"поток",format:"формат",kind:"тип",length:"длину",hook:"хук",hookText:"хук",hookNote:"уточнение хука",hookTrial:"Trial-хук",trialNote:"вариант Trial Reel",body:"тело",cta:"призыв",test:"что проверяем",igUrl:"ссылку",caption:"подпись",production:"производство",verdictNote:"разбор",week:"неделю"}[f] || f;
+  logOnce(p.id+":"+f, `изменил(а) ${L} в ${p.code}`, p.id);
+}
+function saveScenes(mut){ const p = curPost(); if(!p) return; const sc = (p.scenes||[]).map(r => ({c:[...(r.c||["","","",""])]})); mut(sc); upd(postPath(p.id), {scenes: sc}); logOnce(p.id+":scenes", `изменил(а) сценарий ${p.code}`, p.id); }
+function savePrompts(mut){ const p = curPost(); if(!p) return; const ps = [...(p.prompts||[])]; mut(ps); upd(postPath(p.id), {prompts: ps}); logOnce(p.id+":prompts", `изменил(а) промпты ${p.code}`, p.id); }
+async function copyText(t, btn){ try { await navigator.clipboard.writeText(t); toast("Скопировано"); } catch(e){ toast("Не получилось скопировать. Выделите текст вручную."); } }
+
+async function uploadFiles(files){
+  const p = curPost(); if(!p || !assets) return;
+  const media = [...(p.media||[])];
+  for(const f of files){
+    toast(`Загружаем ${f.name}…`);
+    try { const r = await assets.upload(f); media.push({kind:"asset", id:r.id, name:f.name, type:r.contentType, size:r.sizeBytes, by:S.me?.id||null, at:nowIso()}); }
+    catch(e){ const c = e?.code; toast(c==="too_large" ? `${f.name}: файл больше ${window.SOMNI_MAX_MB || 20} МБ` : c==="unsupported_type" ? `${f.name}: такой тип не поддерживается` : c==="quota_or_state" ? "Место для файлов закончилось" : `${f.name}: не удалось загрузить`); }
+  }
+  if(media.length !== (p.media||[]).length){ await upd(postPath(p.id), {media}); logIt(`прикрепил(а) файлы к ${p.code}`, p.id); toast("Файлы прикреплены"); }
+}
+
+function exportCsv(){
+  const rows = [["Код","Неделя","Дата ET","Время ET","Время МСК","Поток","Формат","Тип","Название","Хук","Текст хука","Тело","Призыв","Что проверяем","Статус","Оценка","Почему так","Ссылка",...MF.map(([,l])=>l+" (итог)"),"Подпись"]];
+  sortBy(campPosts(), p => (p.date||"")+(p.time||"")).forEach(p => { const m = finalM(p);
+    rows.push([p.code,p.week,p.date,p.time,toMsk(p.date,p.time),STREAMS[p.stream]||"",p.format,p.kind,p.title,p.hook,hookTextOf(p),p.body,p.cta,p.test,STATUS_L[p.status]||"",VERDICT_L[p.verdict]||"",p.verdictNote,p.igUrl,...MF.map(([k])=>m[k]??""),p.caption]); });
+  const csv = "﻿" + rows.map(r => r.map(v => { const s = String(v ?? ""); return /[";\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }).join(";")).join("\r\n");
+  const name = "somni-plan-" + (curCamp()?.id || "export") + ".csv";
+  downloads.save({filename: name, data: new Blob([csv], {type:"text/csv"})}).then(()=>toast("Файл сохранён")).catch(e => { if(e?.code !== "declined") toast("Не удалось сохранить файл"); });
+}
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if(!b) return;
+  const a = b.dataset.act, v = b.dataset.v, id = b.dataset.id;
+  if(b.tagName === "A") e.preventDefault();
+  const p = curPost();
+  switch(a){
+    case "close": closePost(); break;
+    case "fstream": S.f.stream = v; renderMain(); break;
+    case "csv": exportCsv(); break;
+    case "drtab": S.drTab = v; renderDrawer(); break;
+    case "pstatus": if(p && p.status !== v){ upd(postPath(p.id), {status:v}); logIt(`перевёл(а) ${p.code} в статус «${STATUS_L[v]}»`, p.id); } break;
+    case "verdict": if(p && p.verdict !== v){ upd(postPath(p.id), {verdict:v}); if(v) logIt(`оценил(а) ${p.code}: ${VERDICT_L[v].toLowerCase()}`, p.id); } break;
+    case "addrow": saveScenes(sc => sc.push({c:["","","",""]})); break;
+    case "delrow": saveScenes(sc => sc.splice(+b.dataset.i, 1)); break;
+    case "cols": if(p) upd(postPath(p.id), {cols: v==="reel" ? REEL_COLS : ["Слайд","Заголовок","Текст","Визуал"]}); break;
+    case "addprompt": savePrompts(ps => ps.push("")); break;
+    case "delprompt": savePrompts(ps => ps.splice(+b.dataset.i, 1)); break;
+    case "copyprompt": if(p) copyText((p.prompts||[])[+b.dataset.i]||""); break;
+    case "copycap": if(p) copyText(p.caption||""); break;
+    case "addlink": { const u = $("#lnUrl").value.trim(), n = $("#lnName").value.trim();
+      if(!/^https?:\/\//.test(u)){ toast("Вставьте ссылку, которая начинается с https://"); break; }
+      upd(postPath(p.id), {media:[...(p.media||[]), {kind:"link", url:u, name:n||u.replace(/^https?:\/\//,"").slice(0,40), by:S.me?.id||null, at:nowIso()}]}); logIt(`прикрепил(а) ссылку к ${p.code}`, p.id); break; }
+    case "delmedia": { const i = +b.dataset.i; const ms = [...(p.media||[])]; const [m] = ms.splice(i,1); await upd(postPath(p.id), {media: ms});
+      if(m && m.kind === "asset" && assets){ const still = [...S.posts.values()].some(q => q.id!==p.id && (q.media||[]).some(x => x.id===m.id)); if(!still) assets.delete(m.id).catch(()=>{}); } break; }
+    case "addcomment": { const t = $("#newComment").value.trim(); if(!t || !p) break;
+      try { await db.collection("comments").add({post:p.id, text:t, by:S.me?.id||null, at:nowIso()}); $("#newComment").value = ""; logIt(`прокомментировал(а) ${p.code}`, p.id); } catch(err){ onWriteErr(err); } break; }
+    case "delcomment": delDoc("comments/" + id); break;
+    case "askdel": S.confirmDel = true; renderDrawer(); break;
+    case "canceldel": S.confirmDel = false; renderDrawer(); break;
+    case "delpost": if(p){ const code = p.code; await delDoc(postPath(p.id)); logIt(`удалил(а) публикацию ${code}`); closePost(); toast(`Публикация ${code} удалена`); } break;
+    case "addpost": createPost(+b.dataset.week); break;
+    case "createcamp": {
+      const name = $("#ncName").value.trim(), start = $("#ncStart").value, n = Math.max(1, Math.min(12, +$("#ncWeeks").value || 4));
+      if(!name || !start){ toast("Укажите название и первый день кампании"); break; }
+      const weeks = []; for(let i=1;i<=n;i++){ const s = parseD(start); s.setUTCDate(s.getUTCDate()+(i-1)*7); const e2 = new Date(s); e2.setUTCDate(e2.getUTCDate()+6);
+        weeks.push({n:i, dates:`${s.getUTCDate()} ${MONTHS[s.getUTCMonth()]} — ${e2.getUTCDate()} ${MONTHS[e2.getUTCMonth()]}`, title:""}); }
+      const end = parseD(start); end.setUTCDate(end.getUTCDate() + n*7 - 1);
+      const cid = "c-" + Date.now().toString(36);
+      await setDoc("campaigns/" + cid, {name, subtitle:"", start, end:end.toISOString().slice(0,10), goal:"", weeks, summary:"", order: S.campaigns.size+1, createdAt: nowIso(), createdBy:S.me?.id||null});
+      logIt(`создал(а) кампанию «${name}»`); S.campaign = cid; S.newCamp = false; schedule(); break; }
+    case "cancelcamp": S.newCamp = false; renderMain(); break;
+    case "toc": { const el = document.getElementById("sec-" + id); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); break; }
+    case "editsec": S.editSec = id; renderMain(); setTimeout(()=>$("#secBody")?.focus(), 30); break;
+    case "cancelsec": S.editSec = null; renderMain(); break;
+    case "savesec": { const s = S.strategy.get(id); const title = $("#secTitle").value.trim() || s.title, body = $("#secBody").value;
+      S.editSec = null;
+      if(body !== s.body || title !== s.title){ const hist = [...(s.history||[]), {at: s.updatedAt || nowIso(), by: s.updatedBy || null, title: s.title, body: s.body}].slice(-15);
+        await upd("strategy/" + id, {title, body, history: hist}); logIt(`обновил(а) раздел стратегии «${title}»`); toast("Раздел сохранён"); }
+      renderMain(); break; }
+    case "restoresec": { const s = S.strategy.get(id); const h = (s.history||[])[+b.dataset.i]; if(!h) break;
+      const hist = [...(s.history||[]), {at: s.updatedAt || nowIso(), by: s.updatedBy || null, title: s.title, body: s.body}].slice(-15);
+      await upd("strategy/" + id, {body: h.body, title: h.title || s.title, history: hist}); logIt(`вернул(а) прошлую версию раздела «${s.title}»`); toast("Версия возвращена"); break; }
+    case "delsec": { const s = S.strategy.get(id); await delDoc("strategy/" + id); logIt(`удалил(а) раздел стратегии «${s?.title||""}»`); S.editSec = null; break; }
+    case "addsec": { const sid = "s-" + Date.now().toString(36); const maxO = Math.max(0, ...[...S.strategy.values()].map(s => s.order||0));
+      await setDoc("strategy/" + sid, {title:"Новый раздел", body:"", order:maxO+1, updatedAt:nowIso(), updatedBy:S.me?.id||null, history:[]}); S.editSec = sid; logIt("добавил(а) раздел стратегии"); break; }
+    case "hfilter": S.hookFilter = v; renderMain(); break;
+    case "editlib": S.editLib = S.editLib === id ? null : id; renderMain(); break;
+    case "addhook": { const nums = [...S.hooks.keys()].map(k => +k.slice(2)).filter(n=>!isNaN(n)); const code = "H-" + pad((nums.length?Math.max(...nums):0)+1);
+      await setDoc("hooks/" + code, {code, group:"A", text:"Новый хук", frame:"", stream:"N", source:"", status:"test", note:"", order:999}); S.editLib = "hooks:"+code; S.hookSort = "code"; S.hookFilter = "all"; logIt(`добавил(а) хук ${code}`); break; }
+    case "libtab": S.libTab = v; S.editLib = null; renderMain(); break;
+    case "addlibitem": {
+      if(S.libTab === "cta"){ const nums = [...S.ctas.keys()].map(k=>+k.slice(2)); const code = "C-" + pad(Math.max(0,...nums)+1);
+        await setDoc("ctas/" + code, {code, text:"New call to action", gives:"", stream:"ND", metric:"", status:"test", note:"", order:999}); S.editLib = "ctas:"+code; logIt(`добавил(а) призыв ${code}`); }
+      else if(S.libTab === "rtb"){ const nums = [...S.bodies.keys()].filter(k=>k.startsWith("R-")).map(k=>+k.slice(2)); const code = "R-" + (Math.max(0,...nums)+1);
+        await setDoc("bodies/" + code, {code, kind:"rtb", title:"Строка RTB", content:"", why:"", rtb:"", screens:"", length:"", formats:"", note:"", order:299}); S.editLib = "bodies:"+code; logIt(`добавил(а) строку ${code}`); }
+      else { const nums = [...S.bodies.keys()].filter(k=>k.startsWith("B-")).map(k=>+k.slice(2)); const code = "B-" + pad(Math.max(0,...nums)+1);
+        await setDoc("bodies/" + code, {code, kind:S.libTab, title:"Новое тело", content:"", why:"", rtb:"", screens:"", length:"", formats:"", note:"", order:999}); S.editLib = "bodies:"+code; logIt(`добавил(а) тело ${code}`); }
+      break; }
+    case "addidea": { const t = $("#ideaText").value.trim(); if(!t){ toast("Напишите идею"); break; }
+      try { await db.collection("ideas").add({text:t, kind:$("#ideaKind").value, stream:$("#ideaStream").value, status:"new", by:S.me?.id||null, at:nowIso(), post:""}); $("#ideaText").value = ""; logIt("добавил(а) идею"); toast("Идея добавлена"); } catch(err){ onWriteErr(err); } break; }
+    case "ifilter": S.ideaFilter = v; renderMain(); break;
+    case "ideaplan": S.ideaPlan = id; renderMain(); break;
+    case "ideaplancancel": S.ideaPlan = null; renderMain(); break;
+    case "ideatoplan": { const i = S.ideas.get(id); const week = +b.dataset.week; const c = curCamp(); if(!i || !c) break;
+      const code = nextPostCode(c.id, week); let pid = c.id === "nov-2026" ? code : (c.id + "-w" + code); if(S.posts.has(pid)) pid += "-" + Date.now().toString(36);
+      const isHook = i.kind === "Хук";
+      await setDoc(postPath(pid), {code, campaign:c.id, week, order:999, date:weekStart(c,week), time: i.stream==="D"?"12:00":"23:30", stream: i.stream==="D"?"D":"N", format:"", kind:"Рилс",
+        title: i.text.split("\n")[0].slice(0,80), length:"", hook:"", hookText: isHook ? i.text : "", hookNote:"", hookTrial:"", trialNote:"", body:"", cta:"", test:"Идея из банка идей", status:"plan", verdict:"", verdictNote: "",
+        cols: REEL_COLS, scenes:[], caption:"", production: isHook ? "" : "Идея: " + i.text, prompts:[], media:[], igUrl:"", m48:{}, m7:{}, updatedAt: nowIso(), createdBy: S.me?.id||null});
+      await upd("ideas/" + id, {status:"planned", post: pid}); S.ideaPlan = null; logIt(`перенёс(ла) идею в план как ${code}`, pid); toast(`Добавлено в неделю ${week} как ${code}`); break; }
+    case "delidea": delDoc("ideas/" + id); break;
+    case "mscope": S.metricsScope = v; renderMain(); break;
+  }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target;
+  if(t.id === "campSel"){ if(t.value === "__new"){ S.newCamp = true; S.view = "plan"; if(location.hash !== "#plan") location.hash = "#plan"; renderChrome(); renderMain(); setTimeout(()=>$("#ncName")?.focus(), 30); }
+    else { S.campaign = t.value; try{ localStorage.setItem("somni.camp", t.value); }catch(_){} schedule(); } return; }
+  if(t.id === "fStatus"){ S.f.status = t.value; renderMain(); return; }
+  if(t.id === "hSort"){ S.hookSort = t.value; renderMain(); return; }
+  if(t.id === "upl"){ uploadFiles([...t.files]); t.value = ""; return; }
+  if(t.dataset.pf){ let val = t.value; if(t.dataset.num !== undefined) val = +val; savePostField(t.dataset.pf, val); return; }
+  if(t.dataset.cell){ const [r,c] = t.dataset.cell.split(":").map(Number); saveScenes(sc => { if(sc[r]) sc[r].c[c] = t.value; }); return; }
+  if(t.dataset.col){ const p = curPost(); if(!p) return; const cols = [...(p.cols && p.cols.length===4 ? p.cols : REEL_COLS)]; cols[+t.dataset.col] = t.value; upd(postPath(p.id), {cols}); return; }
+  if(t.dataset.prompt){ const i = +t.dataset.prompt; savePrompts(ps => { ps[i] = t.value; }); return; }
+  if(t.dataset.m){ const p = curPost(); if(!p) return; const [col,k] = t.dataset.m.split("."); const raw = t.value.trim().replace(",", ".");
+    const val = raw === "" ? null : Number(raw); if(raw !== "" && isNaN(val)){ toast("Введите число"); return; }
+    upd(postPath(p.id), {[col]: {[k]: val}}); logOnce(p.id+":m", `внёс(ла) метрики ${p.code}`, p.id); return; }
+  if(t.dataset.week && t.classList.contains("wt")){ const c = curCamp(); if(!c) return; const weeks = (c.weeks||[]).map(w => w.n === +t.dataset.week ? Object.assign({}, w, {title:t.value}) : w);
+    upd("campaigns/" + c.id, {weeks}); logOnce(c.id+":w", `изменил(а) тему недели ${t.dataset.week}`); return; }
+  if(t.dataset.lib){ const [coll, code, f] = t.dataset.lib.split("|"); upd(coll + "/" + code, {[f]: t.value}); logOnce(coll+code+f, `изменил(а) ${code}`); return; }
+  if(t.dataset.idea){ upd("ideas/" + t.dataset.idea, {status: t.value}); return; }
+  if(t.dataset.thr){ const [i,k] = t.dataset.thr.split(":"); const items = (S.thr?.items||[]).map(x => Object.assign({}, x)); if(!items[+i]) return; const n = Number(t.value); if(isNaN(n)) return;
+    items[+i][k] = n; upd("settings/thresholds", {items}); logOnce("thr"+i+k, `изменил(а) порог «${items[+i].label}»`); return; }
+  if(t.dataset.ck){ const [sid, line] = t.dataset.ck.split(":"); const s = S.strategy.get(sid); if(!s) return; const lines = (s.body||"").split("\n");
+    lines[+line] = lines[+line].replace(/^- \[( |x)\]/i, t.checked ? "- [x]" : "- [ ]"); upd("strategy/" + sid, {body: lines.join("\n")});
+    if(t.checked) logIt(`отметил(а) готовым: ${lines[+line].slice(6, 70)}`); return; }
+});
+document.addEventListener("input", e => {
+  const t = e.target;
+  if(t.id === "fQ"){ S.f.q = t.value; clearTimeout(t._d); t._d = setTimeout(() => { const pos = t.selectionStart; renderMain(); const n = $("#fQ"); if(n){ n.focus(); n.setSelectionRange(pos,pos); } }, 200); }
+  if(t.matches("table.sc textarea")) autoH(t);
+});
+document.addEventListener("dragover", e => { const d = e.target.closest?.("#drop"); if(d){ e.preventDefault(); d.classList.add("on"); } });
+document.addEventListener("dragleave", e => { const d = e.target.closest?.("#drop"); if(d) d.classList.remove("on"); });
+document.addEventListener("drop", e => { const d = e.target.closest?.("#drop"); if(d){ e.preventDefault(); d.classList.remove("on"); uploadFiles([...e.dataTransfer.files]); } });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !$("#drawer").hidden) closePost(); });
+$("#scrim").addEventListener("click", closePost);
+
+/* ---------- routing ---------- */
+const VIEWS = ["plan","strategy","hooks","library","ideas","metrics","history","legend"];
+function route(){
+  const h = location.hash.slice(1);
+  if(h.startsWith("post-")){ const id = h.slice(5); if(S.view !== "plan" && !VIEWS.includes(S.view)) S.view = "plan";
+    const p = S.posts.get(id); if(p && p.campaign && p.campaign !== S.campaign){ S.campaign = p.campaign; }
+    renderChrome(); renderMain(); if(S.loaded.posts) openPost(id); else S.openPost = id; return; }
+  if(!$("#drawer").hidden) { $("#drawer").hidden = true; $("#scrim").hidden = true; document.body.style.overflow = ""; S.openPost = null; }
+  S.view = VIEWS.includes(h) ? h : "plan"; renderChrome(); renderMain(); window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+
+/* ---------- boot ---------- */
+function sub(coll, onDocs, q){
+  (q || db.collection(coll)).onSnapshot(snap => { onDocs(snap.docs.map(d => Object.assign({id:d.id}, d.data()))); S.loaded[coll] = true;
+      if(coll === "posts" && S.openPost && $("#drawer").hidden && location.hash === "#post-" + S.openPost) openPost(S.openPost);
+      schedule(); },
+    err => { if(err?.code === "revoked") { db = null; } schedule(); });
+}
+function intoMap(map){ return docs => { map.clear(); docs.forEach(d => map.set(d.id, d)); }; }
+async function boot(){
+  const cl = window.claude;
+  if(!cl || !cl.use){ db = null; renderMain(); return; }
+  [db, user, assets, downloads] = await Promise.all([cl.use("db"), cl.use("user"), cl.use("assets").catch(()=>null), cl.use("downloads").catch(()=>null)]);
+  if(!db){ renderMain(); return; }
+  if(user){ try { S.me = await user.me(); S.isOwner = S.me.isOwner; const cw = await user.can("data.write"); if(cw === false){ S.canWrite = false; document.body.classList.add("ro"); }
+      if(S.me.id){ names[S.me.id] = S.me.name || "Вы"; avatars[S.me.id] = S.me.avatarUrl; }
+      $("#me").innerHTML = `<img src="${esc(S.me.avatarUrl)}" alt=""><span>${esc(S.me.name || "Вы")}${S.canWrite ? "" : " · только просмотр"}</span>${window.SOMNI_SIGNOUT ? `<button class="btn sm ghost" id="signOut">Выйти</button>` : ""}`; } catch(e){} }
+  try { S.campaign = localStorage.getItem("somni.camp"); } catch(_){}
+  sub("posts", intoMap(S.posts));
+  sub("hooks", intoMap(S.hooks));
+  sub("bodies", intoMap(S.bodies));
+  sub("ctas", intoMap(S.ctas));
+  sub("strategy", intoMap(S.strategy));
+  sub("ideas", intoMap(S.ideas));
+  sub("comments", intoMap(S.comments));
+  sub("campaigns", docs => { S.campaigns.clear(); docs.forEach(d => S.campaigns.set(d.id, d));
+    if(!S.campaign || !S.campaigns.has(S.campaign)){ const c = sortBy([...S.campaigns.values()], c=>c.start||"").pop(); S.campaign = c ? c.id : null; } });
+  sub("log", docs => { S.log = docs; }, db.collection("log").orderBy("at","desc").limit(300));
+  db.doc("settings/thresholds").onSnapshot(s => { S.thr = s.exists ? s.data() : {items:[]}; schedule(); }, () => {});
+  route();
+}
+boot();
+})();
+</script>
+</body>
+</html>
